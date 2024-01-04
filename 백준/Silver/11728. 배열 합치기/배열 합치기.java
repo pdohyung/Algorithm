@@ -4,41 +4,45 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st1 = new StringTokenizer(br.readLine());
-		int N = Integer.parseInt(st1.nextToken());
-		int M = Integer.parseInt(st1.nextToken());
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int a = Integer.parseInt(st.nextToken());
+        int b = Integer.parseInt(st.nextToken());
+        int[] n = new int[a];
+        int[] m = new int[b];
 
-		int[] arr1 = new int[N];
-		int[] arr2 = new int[M];
+        st = new StringTokenizer(br.readLine());
 
-		StringTokenizer st2 = new StringTokenizer(br.readLine());
-		for(int i = 0; i < N; i++){
-			arr1[i] = Integer.parseInt(st2.nextToken());
-		}
+        for (int i = 0; i < a; i++) {
+            n[i] = Integer.parseInt(st.nextToken());
+        }
 
-		StringTokenizer st3 = new StringTokenizer(br.readLine());
-		for(int i = 0; i < M; i++){
-			arr2[i] = Integer.parseInt(st3.nextToken());
-		}
+        st = new StringTokenizer(br.readLine());
 
-		StringBuilder sb = new StringBuilder();
-		int i=0;
-		int j=0;
-		while(i < N && j < M) {
-			if(arr1[i]<arr2[j]) {
-				sb.append(arr1[i++]+" ");
-			}else {
-				sb.append(arr2[j++]+" ");
-			}
-		}
-		while(i < N) {
-			sb.append(arr1[i++] + " ");
-		}
-		while(j < M) {
-			sb.append(arr2[j++] + " ");
-		}
-		System.out.println(sb.toString());
-	}
+        for (int i = 0; i < b; i++) {
+            m[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int p1 = 0, p2 = 0;
+        StringBuilder sb = new StringBuilder();
+
+        while (p1 < a && p2 < b) {
+            if (n[p1] < m[p2]) {
+                sb.append(n[p1++]).append(" ");
+                continue;
+            }
+            sb.append(m[p2++]).append(" ");
+        }
+
+        while (p1 < a) {
+            sb.append(n[p1++]).append(" ");
+        }
+
+        while (p2 < b) {
+            sb.append(m[p2++]).append(" ");
+        }
+
+        System.out.println(sb.toString());
+    }
 }
