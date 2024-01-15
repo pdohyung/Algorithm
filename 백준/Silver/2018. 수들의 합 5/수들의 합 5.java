@@ -1,23 +1,38 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int N = Integer.parseInt(br.readLine());
-		int cnt = 0;
-		for (int i = 1; i <= N; i++) {
-			int sum = 0;
-			for (int j = i; j <= N; j++) {
-				sum += j;
-				if (sum > N)
-					break;
-				else if (sum == N) {
-					cnt++;
-					break;
-				}
-			}
-		}
-		System.out.println(cnt);
-	}
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    StringTokenizer st;
+
+    public static void main(String[] args) throws IOException {
+        new Main().solution();
+    }
+
+    void solution() throws IOException {
+        int n = Integer.parseInt(br.readLine());
+        int startIdx = 0;
+        int endIdx = 0;
+        int sum = 0;
+        int ans = 0;
+
+        while (startIdx <= n) {
+            if (sum == n) {
+                ans++;
+                endIdx++;
+                sum += endIdx;
+                continue;
+            }
+            if (sum < n) {
+                endIdx++;
+                sum += endIdx;
+                continue;
+            }
+            if (sum > n) {
+                sum -= startIdx;
+                startIdx++;
+            }
+        }
+        System.out.println(ans);
+    }
 }
