@@ -1,22 +1,29 @@
 class Solution {
     static int answer;
-
-    public static int solution(int[] numbers, int target) {
-        dfs(0, 0, numbers, target);
+    static int end;
+    static int targetNumber;
+    static int[] inputNumbers;
+    
+    public int solution(int[] numbers, int target) {
+        answer = 0;
+        end = numbers.length;
+        targetNumber = target;
+        inputNumbers = numbers;
+        
+        dfs(0, 0);
+        
         return answer;
     }
-
-    private static void dfs(int sum, int n, int[] numbers, int target) {
-        if (n == numbers.length && sum == target) {
-            answer++;
+    
+    private void dfs(int res, int depth) {
+        if(depth == end) {
+            if (res == targetNumber) {
+                answer++;
+            }
             return;
         }
-
-        if (n >= numbers.length) {
-            return;
-        }
-
-        dfs(sum + numbers[n], n + 1, numbers, target);
-        dfs(sum - numbers[n], n + 1, numbers, target);
+        
+         dfs(res + inputNumbers[depth], depth + 1);
+         dfs(res - inputNumbers[depth], depth + 1);
     }
 }
