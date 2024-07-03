@@ -29,11 +29,11 @@ class Solution {
             answer = scoreInfo.clone();
         } else if (max > 0 && score == max) {
             for(int i = 10; i >= 0; i--) {
-                if(scoreInfo[i] != answer[i]) {
-                    if(scoreInfo[i] > answer[i]) {
-                        answer = scoreInfo.clone();
-                    }
-                     break;
+                if(scoreInfo[i] > answer[i]) {
+                    answer = scoreInfo.clone();
+                    break;
+                } else if(scoreInfo[i] < answer[i]){
+                    break;
                 }
             }
         }
