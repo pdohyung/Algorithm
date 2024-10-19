@@ -1,72 +1,67 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
-        String[] num = new String[101];
-        int[] strike = new int[101];
-        int[] ball = new int[101];
+    static BufferedReader br;
+    static StringTokenizer st;
+    static String now;
+    static int N, ball, strike, answer;
+    static boolean[] check;
 
-        for (int i = 0; i < n; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            num[i] = st.nextToken();
-            strike[i] = Integer.parseInt(st.nextToken());
-            ball[i] = Integer.parseInt(st.nextToken());
+    public static void main(String[] args) throws IOException {
+
+        br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        check = new boolean[1000];
+
+        // 정답 배열에서 숫자 야구 불가능한 수를 제거
+        for (int i = 123; i <= 987; i++) {
+            String num = String.valueOf(i);
+            char f = num.charAt(0);
+            char s = num.charAt(1);
+            char t = num.charAt(2);
+
+            if (f == '0' || s == '0' || t == '0') continue;
+            if (f == s || s == t || f == t) continue;
+
+            check[i] = true;
         }
 
-        int count = 0;
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            now = st.nextToken();
+            strike = Integer.parseInt(st.nextToken());
+            ball = Integer.parseInt(st.nextToken());
 
-        for (int i = 123; i <= 987; i++) {
-            boolean flag = true;
-            for (int j = 0; j < n; j++) {
-                if (isDuplicate(String.valueOf(i)) || !isValid(num[j], String.valueOf(i), strike[j], ball[j])) {
-                    flag = false;
+            for (int j = 123; j <= 987; j++) {
+
+                if (!check[j]) continue;
+
+                int ns = 0;
+                int nb = 0;
+
+                String candidate = String.valueOf(j);
+                for (int first = 0; first < 3; first++) {
+                    for (int second = 0; second < 3; second++) {
+                        if (now.charAt(first) == candidate.charAt(second)) {
+                            if (first == second) ns++; // 스트라이크
+                            else nb++; // 볼
+                        }
+                    }
+                }
+
+                if (ns != strike || nb != ball) {
+                    check[j] = false;
                 }
             }
-            if (flag) {
-                count++;
-            }
-        }
-        System.out.println(count);
-    }
-
-    private static boolean isDuplicate(String num) {
-        List<Character> list = new ArrayList<>();
-        Set<Character> set = new HashSet<>();
-        for (char c : num.toCharArray()) {
-            list.add(c);
-            set.add(c);
-        }
-        if (list.size() != set.size()) {
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean isValid(String number, String idx, int strike, int ball) {
-        if (idx.contains("0")){
-            return false;
-        }
-        int expectedStrike = 0;
-        int expectedBall = 0;
-        for (int i = 0; i < 3; i++) {
-            if (number.charAt(i) == idx.charAt(i)) {
-                expectedStrike++;
-                continue;
-            }
-            if (number.contains(String.valueOf(idx.charAt(i)))) {
-                expectedBall++;
-            }
         }
 
-        if (expectedStrike == strike && expectedBall == ball) {
-            return true;
+        answer = 0;
+        for (int i = 123; i <= 987; i++) {
+            if (check[i]) answer++;
         }
-        return false;
+
+        System.out.println(answer);
     }
 }
