@@ -2,35 +2,36 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int[] D;
-    static int[] A;
+
+    static BufferedReader br;
+    static StringTokenizer st;
+    static int[] numbers, dp;
+    static int N, answer;
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
-
-    void solution() throws IOException {
-        int N = Integer.parseInt(br.readLine());
+        br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        numbers = new int[N];
+        dp = new int[N];
         st = new StringTokenizer(br.readLine());
-        D = new int[N + 1];
-        A = new int[N + 1];
-        int max = 0;
 
         for (int i = 0; i < N; i++) {
-            A[i] = Integer.parseInt(st.nextToken());
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
         for (int i = 0; i < N; i++) {
-            D[i] = 1;
-            for (int j = 0; j < i; j++) {
-                if (A[j] < A[i] && D[i] < D[j] + 1){
-                    D[i] = D[j] + 1;
+            for (int j = 0; j <= i; j++) {
+                if (numbers[i] > numbers[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
-            max = Math.max(D[i], max);
         }
-        System.out.println(max);
+
+        for (int i = 0; i < N; i++) {
+//            System.out.println(dp[i]);
+            answer = Math.max(answer, dp[i]);
+        }
+
+        System.out.println(answer + 1);
     }
 }
