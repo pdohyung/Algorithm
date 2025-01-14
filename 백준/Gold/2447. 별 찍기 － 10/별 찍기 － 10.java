@@ -1,49 +1,50 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    static BufferedReader br;
-    static StringTokenizer st;
-    static String[][] map;
+    static char[][] result;
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    void solution() throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        map = new String[N][N];
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < N; i++) {
-            Arrays.fill(map[i], " ");
-        }
-        solve(0, 0, N);
+        result = new char[N][N];
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                sb.append(map[i][j]);
+                result[i][j] = ' ';
             }
-            sb.append("\n");
         }
-        System.out.println(sb);
+
+        recursive(0, 0, N);
+        
+        StringBuilder answer = new StringBuilder();
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                answer.append(result[i][j]);
+            }
+            answer.append("\n");
+        }
+
+        System.out.println(answer);
     }
 
-    static void solve(int x, int y, int n) {
+    private static void recursive(int x, int y, int n) {
         if (n == 1) {
-            map[x][y] = "*";
+            result[x][y] = '*';
             return;
         }
+
+        int divN = n / 3;
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (!(i == 1 && j == 1)) {
-                    solve(x + i * (n / 3), y + j * (n / 3), n / 3);
+                    recursive(x + i * divN, y + j * divN, divN);
                 }
             }
         }
     }
-
 }
