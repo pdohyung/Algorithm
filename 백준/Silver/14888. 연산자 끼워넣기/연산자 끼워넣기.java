@@ -1,89 +1,86 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    static BufferedReader br;
-    static StringTokenizer st;
-    static int N, max, min;
-    static int[] numbers;
-    static char[] seq;
-    static char[] operators;
+    static char[] def = {'+', '-', '*', '/'};
+    static int N;
+    static int[] A;
+    static ArrayList<Character> tmp;
+    static char[] ops;
     static boolean[] visited;
-    static char[] sample = {'+', '-', '*', '/'};
+    static int min, max;
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    void solution() throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        max = Integer.MIN_VALUE;
-        min = Integer.MAX_VALUE;
-        numbers = new int[N];
-        seq = new char[N - 1];
-        visited = new boolean[N - 1];
-        operators = new char[N - 1];
+        A = new int[N];
 
-        st = new StringTokenizer(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
         for (int i = 0; i < N; i++) {
-            numbers[i] = Integer.parseInt(st.nextToken());
+            A[i] = Integer.parseInt(st.nextToken());
         }
 
         st = new StringTokenizer(br.readLine());
-        int cnt = 0;
+        tmp = new ArrayList<>();
+
         for (int i = 0; i < 4; i++) {
             int n = Integer.parseInt(st.nextToken());
             for (int j = 0; j < n; j++) {
-                operators[cnt] = sample[i];
-                cnt++;
+                tmp.add(def[i]);
             }
         }
 
-        //System.out.println(Arrays.toString(operators));
+        int size = tmp.size();
+        ops = new char[size];
+        visited = new boolean[size];
 
-        dfs(0);
+        for (int i = 0; i < ops.length; i++) {
+            ops[i] = tmp.get(i);
+        }
+
+//        System.out.println(Arrays.toString(ops));
+//        System.out.println(ops.length);
+        min = Integer.MAX_VALUE;
+        max = Integer.MIN_VALUE;
+        dfs(0, A[0]);
+
         System.out.println(max);
         System.out.println(min);
     }
 
-    static void dfs(int depth) {
-        if (depth == N - 1) {
-            int result = calculate(numbers[0]);
-            max = Math.max(max, result);
-            min = Math.min(min, result);
+
+    private static void dfs(int depth, int sum) {
+        if (depth == ops.length) {
+//            System.out.println(depth);
+            min = Math.min(min, sum);
+            max = Math.max(max, sum);
             return;
         }
 
-        for (int i = 0; i < N - 1; i++) {
+        for (int i = 0; i < ops.length; i++) {
             if (!visited[i]) {
                 visited[i] = true;
-                seq[depth] = operators[i];
-                dfs(depth + 1);
+                dfs(depth + 1, cal(sum, A[depth + 1], ops[i]));
                 visited[i] = false;
             }
         }
     }
 
-    static int calculate(int result) {
-        for (int i = 0; i < N - 1; i++) {
-            switch (seq[i]) {
-                case '+':
-                    result += numbers[i + 1];
-                    break;
-                case '-':
-                    result -= numbers[i + 1];
-                    break;
-                case '*':
-                    result *= numbers[i + 1];
-                    break;
-                case '/':
-                    result /= numbers[i + 1];
-                    break;
-            }
+    private static int cal(int n1, int n2, int op) {
+        switch (op) {
+            case '+':
+                return n1 + n2;
+            case '-':
+                return n1 - n2;
+            case '*':
+                return n1 * n2;
+            case '/':
+                return n1 / n2;
+            default:
+                return 0;
         }
-        return result;
     }
-
 }
