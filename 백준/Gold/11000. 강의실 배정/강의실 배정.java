@@ -9,14 +9,6 @@ class Node {
         this.s = s;
         this.t = t;
     }
-
-    public int getS() {
-        return s;
-    }
-
-    public int getT() {
-        return t;
-    }
 }
 
 public class Main {
@@ -25,7 +17,7 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
 
-        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(Node::getS).thenComparing(Node::getT));
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.s));
 
         for (int i = 0; i < N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
@@ -35,23 +27,14 @@ public class Main {
             pq.add(new Node(s, t));
         }
 
-        Node first = pq.poll();
         PriorityQueue<Integer> end = new PriorityQueue<>();
-        end.add(first.t);
 
         while (!pq.isEmpty()) {
             Node now = pq.poll();
-            int s = now.s;
-            int t = now.t;
-
-            int before = end.poll();
-
-            if (before <= s) {
-                end.add(t);
-            } else {
-                end.add(before);
-                end.add(t);
+            if (!end.isEmpty() && end.peek() <= now.s) {
+                end.poll();
             }
+            end.add(now.t);
         }
 
         System.out.println(end.size());
