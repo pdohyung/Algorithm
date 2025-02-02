@@ -1,4 +1,3 @@
-
 import java.util.*;
 import java.io.*;
 
@@ -11,38 +10,34 @@ public class Main {
         int H = Integer.parseInt(st.nextToken());
         int W = Integer.parseInt(st.nextToken());
 
-        boolean[][] map = new boolean[H][W];
-
+        int[] height = new int[W];
         st = new StringTokenizer(br.readLine());
 
         for (int i = 0; i < W; i++) {
-            int now = Integer.parseInt(st.nextToken());
-            for (int j = H - 1; j >= 0; j--) {
-                if (now > 0) {
-                    map[j][i] = true;
-                    now--;
-                }
-            }
+            height[i] = Integer.parseInt(st.nextToken());
         }
+
+        int[] leftMax = new int[W];
+        leftMax[0] = height[0];
+        for (int i = 1; i < W; i++) {
+            leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+        }
+
+        int[] rightMax = new int[W];
+        rightMax[W - 1] = height[W - 1];
+        for (int i = W - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+        }
+
+//        System.out.println(Arrays.toString(leftMax));
+//        System.out.println(Arrays.toString(rightMax));
 
         int answer = 0;
-
-        for (int i = H - 1; i >= 0; i--) {
-            int flag = 0;
-            int cnt = 0;
-            for (int j = 0; j < W; j++) {
-//                System.out.println("좌표  = " + i + " " + j);
-                if (flag == 0 && map[i][j]) {
-                    flag = 1;
-                } else if (flag == 1 && !map[i][j]) {
-                    cnt++;
-                } else if (flag == 1 && map[i][j] && cnt > 0) {
-//                    System.out.println(cnt);
-                    answer += cnt;
-                    cnt = 0;
-                }
-            }
+        for (int i = 0; i < W; i++) {
+            int w = Math.min(leftMax[i], rightMax[i]) - height[i];
+            if (w > 0) answer += w;
         }
+
         System.out.println(answer);
     }
 }
