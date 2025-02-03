@@ -22,46 +22,33 @@ public class Main {
 
             if (parent == -1) {
                 root = i;
-                continue;
+            } else {
+                graph[parent].add(i);
             }
-
-            graph[parent].add(i);
         }
 
-//        for (int i = 0; i < N; i++) {
-//            System.out.println(graph[i]);
-//        }
-        graph[target] = new ArrayList<>();
-        visited[target] = true;
+        if (target == root) {
+            System.out.println(0);
+            return;
+        }
+
         for (int i = 0; i < N; i++) {
             graph[i].remove(Integer.valueOf(target));
         }
-//        System.out.println(Arrays.toString(visited));
-//        for (int i = 0; i < N; i++) {
-//            System.out.println(graph[i]);
-//        }
+
         answer = 0;
         dfs(root);
-//        System.out.println(Arrays.toString(visited));
         System.out.println(answer);
     }
 
     private static void dfs(int start) {
-        if (visited[start]) {
-            return;
-        }
-
-        visited[start] = true;
-
         if (graph[start].isEmpty()) {
             answer++;
             return;
         }
 
         for (int next : graph[start]) {
-            if (!visited[next]) {
-                dfs(next);
-            }
+            dfs(next);
         }
     }
 }
