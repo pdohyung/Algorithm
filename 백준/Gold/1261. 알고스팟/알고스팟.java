@@ -18,7 +18,6 @@ public class Main {
 
     static int N, M;
     static int[][] map;
-    static boolean[][] visited;
     static int[] dx = {1, 0, -1, 0};
     static int[] dy = {0, 1, 0, -1};
 
@@ -28,14 +27,13 @@ public class Main {
 
         M = Integer.parseInt(st.nextToken());
         N = Integer.parseInt(st.nextToken());
-        visited = new boolean[N][M];
         map = new int[N][M];
 
         for (int i = 0; i < N; i++) {
             char[] line = br.readLine().toCharArray();
             for (int j = 0; j < M; j++) {
                 if (line[j] == '1') {
-                    map[i][j] = -1;
+                    map[i][j] = 1;
                 } else {
                     map[i][j] = 0;
                 }
@@ -45,7 +43,6 @@ public class Main {
         int dist[][] = new int[N][M];
         for (int i = 0; i < N; i++) Arrays.fill(dist[i], Integer.MAX_VALUE);
         dist[0][0] = 0;
-        visited[0][0] = true;
 
         PriorityQueue<Node> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cnt, o2.cnt));
         pq.add(new Node(0, 0, 0));
@@ -56,21 +53,19 @@ public class Main {
             int y = now.y;
             int cnt = now.cnt;
 
+            if (dist[x][y] < cnt) continue;
+
             for (int i = 0; i < 4; i++) {
                 int nx = x + dx[i];
                 int ny = y + dy[i];
 
-                if (ny < 0 || ny >= M || nx < 0 || nx >= N || visited[nx][ny]) continue;
-                if (dist[nx][ny] < cnt) continue;
+                if (ny < 0 || ny >= M || nx < 0 || nx >= N) continue;
 
-                visited[nx][ny] = true;
+                int newCnt = map[nx][ny] + cnt;
 
-                if (map[nx][ny] == -1 && dist[nx][ny] > dist[x][y] + 1) {
-                    dist[nx][ny] = dist[x][y] + 1;
-                    pq.add(new Node(nx, ny, dist[nx][ny]));
-                } else {
-                    dist[nx][ny] = dist[x][y];
-                    pq.add(new Node(nx, ny, dist[nx][ny]));
+                if (dist[nx][ny] > newCnt) {
+                    dist[nx][ny] = newCnt;
+                    pq.add(new Node(nx, ny, newCnt));
                 }
             }
         }
