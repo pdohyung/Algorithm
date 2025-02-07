@@ -1,47 +1,33 @@
-
 import java.util.*;
 import java.io.*;
 
-class Node {
-    int w;
-    int v;
-
-    public Node(int w, int v) {
-        this.w = w;
-        this.v = v;
-    }
-}
-
 public class Main {
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         int N = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(st.nextToken());
-        int[] dp = new int[K + 1];
-        ArrayList<Node> things = new ArrayList<>();
+
+        int[][] things = new int[N][2];
 
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            int w = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
-            things.add(new Node(w, v));
+            things[i][0] = Integer.parseInt(st.nextToken());
+            things[i][1] = Integer.parseInt(st.nextToken());
         }
 
-//        System.out.println(things);
+        int[] dp = new int[K + 1];
 
         for (int i = 0; i < N; i++) {
-            Node now = things.get(i);
-            int w = now.w;
-            int v = now.v;
+            int w = things[i][0];
+            int v = things[i][1];
 
             for (int j = K; j >= w; j--) {
                 dp[j] = Math.max(dp[j], dp[j - w] + v);
             }
         }
-//        System.out.println(Arrays.toString(dp));
+
         System.out.println(dp[K]);
     }
 }
