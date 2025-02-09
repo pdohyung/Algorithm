@@ -1,30 +1,23 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-    static List<Integer>[] graph;
+
+    static int N, M, answer;
+    static ArrayList<Integer>[] graph;
     static boolean[] visited;
-    static boolean arrive;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
 
-        graph = new ArrayList[n];
-        visited = new boolean[n];
+        graph = new ArrayList[N];
+        for (int i = 0; i < N; i++) graph[i] = new ArrayList<>();
 
-        for (int i = 0; i < n; i++) {
-            graph[i] = new ArrayList<>();
-        }
-
-        for (int i = 0; i < m; i++) {
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             int start = Integer.parseInt(st.nextToken());
             int end = Integer.parseInt(st.nextToken());
@@ -32,34 +25,32 @@ public class Main {
             graph[end].add(start);
         }
 
-        for (int i = 0; i < n; i++) {
-            dfs(i, 1);
+        answer = 0;
 
-            if (arrive) {
-                break;
-            }
+        for (int i = 0; i < N; i++) {
+            visited = new boolean[N];
+            dfs(i, 0);
+            if (answer == 1) break;
         }
 
-        if (arrive) {
-            System.out.println(1);
-            return;
-        }
-
-        System.out.println(0);
+        System.out.println(answer);
     }
 
-    private static void dfs(int node, int depth) {
-        if (depth == 5 || arrive) {
-            arrive = true;
+    private static void dfs(int start, int depth) {
+        if (depth == 4) {
+            answer = 1;
             return;
         }
-        visited[node] = true;
 
-        for (int i : graph[node]) {
-            if (!visited[i]) {
-                dfs(i, depth + 1);
+        visited[start] = true;
+
+        for (int next : graph[start]) {
+            if (!visited[next]) {
+                dfs(next, depth + 1);
+                if (answer == 1) break;
             }
         }
-        visited[node] = false;
+
+        visited[start] = false;
     }
 }
