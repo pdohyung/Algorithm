@@ -1,94 +1,85 @@
-import java.io.*;
+
 import java.util.*;
+import java.io.*;
+
+class Node {
+    int x, y;
+
+    public Node(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int N, K, L;
-    static int[][] map;
-    static boolean[][] visit;
-    static Map<Integer, String> directionInfo;
-    static List<int[]> snake;
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    void solution() throws IOException {
-        N = Integer.parseInt(br.readLine());
-        K = Integer.parseInt(br.readLine());
-        map = new int[N][N];
-        visit = new boolean[N][N];
-        directionInfo = new HashMap<>();
-        snake = new ArrayList<>();
+        int N = Integer.parseInt(br.readLine());
+        int[][] map = new int[N][N];
+        int K = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < K; i++) {
-            st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            map[x - 1][y - 1] = 1;
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            map[Integer.parseInt(st.nextToken()) - 1][Integer.parseInt(st.nextToken()) - 1] = 1;
         }
 
-        L = Integer.parseInt(br.readLine());
+        int L = Integer.parseInt(br.readLine());
+        Map<Integer, Character> dirInfos = new LinkedHashMap<>();
 
         for (int i = 0; i < L; i++) {
-            st = new StringTokenizer(br.readLine());
-            int count = Integer.parseInt(st.nextToken());
-            String changeDir = st.nextToken();
-            directionInfo.put(count, changeDir);
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int sec = Integer.parseInt(st.nextToken());
+            char dir = st.nextToken().charAt(0);
+            dirInfos.put(sec, dir);
         }
 
+        int sec = 0;
+        int dir = 0;
         int x = 0;
         int y = 0;
-        snake.add(new int[]{x, y});
-        int dir = 0;
-        int cnt = 0;
+        int[] dx = {0, 1, 0, -1};
+        int[] dy = {1, 0, -1, 0};
+        ArrayDeque<Node> d = new ArrayDeque<>();
+        d.add(new Node(x, y));
 
         while (true) {
-            cnt++;
             int nx = x + dx[dir];
             int ny = y + dy[dir];
 
-            if (isValid(nx, ny)) {
+            // 자신의 몸과 부딪힌 경우
+            if (nx < 0 || nx >= N || ny < 0 || ny >= N || map[nx][ny] == -1) {
+                sec++;
                 break;
             }
 
-            if (map[nx][ny] == 1) {
-                map[nx][ny] = 0; // 사과 삭제
-                snake.add(new int[]{nx, ny});
-            } else { // 사과가 없을 때
-                snake.add(new int[]{nx, ny});
-                snake.remove(0);
+            // 사과가 없다면 꼬리 제거
+            if (map[nx][ny] == 0) {
+                Node tail = d.poll();
+                map[tail.x][tail.y] = 0;
             }
 
+            // 머리 영역 추가
+            map[nx][ny] = -1;
+            d.add(new Node(nx, ny));
             x = nx;
             y = ny;
+            sec++;
 
-            if (directionInfo.containsKey(cnt)) {
-                if (directionInfo.get(cnt).equals("L")) {
-                    dir = (dir + 3) % 4;
-                    continue;
-                }
-                if (directionInfo.get(cnt).equals("D")) {
-                    dir = (dir + 1) % 4;
-                }
+            // 방향 전환
+            if (dirInfos.containsKey(sec)) {
+                if (dirInfos.get(sec) == 'D') dir = (dir + 1) % 4;
+                else dir = (dir + 3) % 4;
             }
-        }
-        System.out.println(cnt);
-    }
 
-    private boolean isValid(int x, int y) {
-        if (y < 0 || y >= N || x < 0 || x >= N || visit[x][y]) {
-            return true;
+//            // 출력
+//            System.out.println(sec);
+//            for (int i = 0; i < N; i++) {
+//                System.out.println(Arrays.toString(map[i]));
+//            }
+//            System.out.println();
         }
-
-        for (int[] snakeArea : snake) {
-            if (snakeArea[0] == x && snakeArea[1] == y) {
-                return true;
-            }
-        }
-        return false;
+        System.out.println(sec);
     }
 }
