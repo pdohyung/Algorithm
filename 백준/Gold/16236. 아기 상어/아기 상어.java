@@ -1,136 +1,109 @@
-import java.io.*;
+
 import java.util.*;
+import java.io.*;
 
 class Node {
-    private final int x;
-    private final int y;
+    int x, y, d;
 
-    public Node(int x, int y) {
+    public Node(int x, int y, int d) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+        this.d = d;
     }
 }
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int N;
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
+
+    static int N, size;
     static int[][] map;
-    static int[][] movableMap;
-    static boolean[][] visit;
-    static Node babyShark;
+    static boolean[][] visited;
+    static List<Node> fishes;
+    static Node baby;
+    static int[] dx = {0, 0, -1, 1};
+    static int[] dy = {-1, 1, 0, 0};
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
-
-    void solution() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         map = new int[N][N];
+        visited = new boolean[N][N];
 
         for (int i = 0; i < N; i++) {
-            st = new StringTokenizer(br.readLine());
+            StringTokenizer st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
-                if (map[i][j] == 9) {
-                    map[i][j] = 0;
-                    babyShark = new Node(i, j);
-                }
+                int num = Integer.parseInt(st.nextToken());
+                if (num == 9) baby = new Node(i, j, 0);
+                map[i][j] = num;
             }
         }
 
-        int time = 0;
-        int babySharkSize = 2;
-        int tempSize = babySharkSize;
-        int minDistance;
-        Node moveNode = null;
+        size = 2;
+        int need = size;
+        int sec = 0;
+        fishes = new ArrayList<>();
+        findFishes();
 
-        while (true) {
-            minDistance = Integer.MAX_VALUE;
-            movableMap = new int[N][N];
-            visit = new boolean[N][N];
+        while (!fishes.isEmpty()) {
+            // 물고기 먹고, 위치 업데이트
+            Node fish = fishes.get(0);
+            int d = fish.d;
+            fish.d = 0;
+            map[fish.x][fish.y] = 9;
+            map[baby.x][baby.y] = 0;
+            baby = fish;
 
-            for (int i = 0; i < N; i++) {
-                for (int j = 0; j < N; j++) {
-                    if (map[i][j] > babySharkSize) {
-                        visit[i][j] = true;
-                    }
-                }
+            // 크기만큼 물고기를 먹으면 사이즈가 커진다
+            need--;
+            if (need == 0) {
+                size++;
+                need = size;
             }
 
-            //System.out.println("babySharkSize " + babySharkSize);
+            // 먹을 수 있는 물고기 업데이트
+            fishes = new ArrayList<>();
+            visited = new boolean[N][N];
+            findFishes();
 
-            bfs(babySharkSize);
-
-//            for (int i = 0; i < N; i++) {
-//                System.out.println(Arrays.toString(map[i]));
-//            }
-//            System.out.println();
-//
-//            for (int i = 0; i < N; i++) {
-//                System.out.println(Arrays.toString(movableMap[i]));
-//            }
-
-            for (int i = N - 1; i >= 0; i--) {
-                for (int j = N - 1; j >= 0; j--) {
-                    if (map[i][j] != 0 && babySharkSize > map[i][j] && movableMap[i][j] > 0) {
-                        //System.out.println("cal min x,y " + i + " " + j);
-                        if (minDistance >= movableMap[i][j]) {
-                            moveNode = new Node(i, j);
-                            minDistance = Math.min(minDistance, movableMap[i][j]);
-                        }
-                    }
-                }
-            }
-
-            //System.out.println("moveNode x, y, distance " + moveNode.getX() + " " + moveNode.getY() + " " + minDistance);
-
-            if (minDistance == Integer.MAX_VALUE) {
-                break;
-            }
-
-            babyShark = new Node(moveNode.getX(), moveNode.getY());
-            map[moveNode.getX()][moveNode.getY()] = 0;
-            time += minDistance;
-            tempSize--;
-
-            if (tempSize == 0) {
-                babySharkSize++;
-                tempSize = babySharkSize;
-            }
-            //System.out.println("-----------------------------");
+            // 시간 증가
+            sec += d;
         }
 
-        System.out.println(time);
+        System.out.println(sec);
     }
 
-    private void bfs(int babySharkSize) {
-        Queue<Node> q = new LinkedList<>();
-        q.add(babyShark);
-        visit[babyShark.getX()][babyShark.getY()] = true;
-        while (!q.isEmpty()) {
-            Node nowNode = q.poll();
-            for (int i = 0; i < 4; i++) {
-                int nx = nowNode.getX() + dx[i];
-                int ny = nowNode.getY() + dy[i];
+    private static void bfs(Node start) {
+        Queue<Node> q = new ArrayDeque<>();
+        q.add(start);
+        visited[start.x][start.y] = true;
 
-                if (ny < 0 || ny >= N || nx < 0 || nx >= N || visit[nx][ny]) continue;
-                if (map[nx][ny] > babySharkSize) continue;
-                //System.out.println("nx, ny " + nx + " " + ny);
-                visit[nx][ny] = true;
-                movableMap[nx][ny] = movableMap[nowNode.getX()][nowNode.getY()] + 1;
-                q.add(new Node(nx, ny));
+        while (!q.isEmpty()) {
+            Node now = q.poll();
+            int x = now.x;
+            int y = now.y;
+            int d = now.d;
+
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+
+                if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+                if (visited[nx][ny] || map[nx][ny] > size) continue;
+
+                visited[nx][ny] = true;
+                q.add(new Node(nx, ny, d + 1));
+                if (map[nx][ny] == 0 || map[nx][ny] == size) continue;
+                fishes.add(new Node(nx, ny, d + 1));
             }
         }
+    }
+
+    // 먹을 수 있는 물고기 찾기
+    private static void findFishes() {
+        bfs(baby);
+        fishes.sort((a, b) -> {
+            if (a.d != b.d) return Integer.compare(a.d, b.d);
+            if (a.x == b.x) return Integer.compare(a.y, b.y);
+            return Integer.compare(a.x, b.x);
+        });
     }
 }
