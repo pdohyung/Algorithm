@@ -11,15 +11,6 @@ class Node {
     }
 }
 
-class Target {
-    int next, total;
-
-    public Target(int next, int total) {
-        this.next = next;
-        this.total = total;
-    }
-}
-
 public class Main {
 
     public static void main(String[] args) throws IOException {
@@ -46,46 +37,40 @@ public class Main {
             reverseGraph[end].add(new Node(start, cost));
         }
 
-        // 파티가 열리는 마을은 0, 나머지 거리는 최대로 초기화
-        int[][] dist = new int[N + 1][2];
-        for (int i = 0; i <= N; i++) Arrays.fill(dist[i], Integer.MAX_VALUE);
-        Arrays.fill(dist[X], 0);
-
         // X까지 가는 최소 거리 구하기
-        PriorityQueue<Target> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.total, o2.total));
-        for (Node n : reverseGraph[X]) pq.add(new Target(n.end, n.cost));
-
-        while (!pq.isEmpty()) {
-            Target now = pq.poll();
-            int nextPos = now.next;
-            int total = now.total;
-
-            if (dist[nextPos][0] < total) continue;
-            dist[nextPos][0] = total;
-
-            for (Node next : reverseGraph[nextPos]) {
-                pq.add(new Target(next.end, total + next.cost));
-            }
-        }
+        int[] distToX = dijkstra(graph, X, N);
 
         // X에서 각 마을로 가는 최소 거리 구하기
-        for (Node n : graph[X]) pq.add(new Target(n.end, n.cost));
+        int[] distFromX = dijkstra(reverseGraph, X, N);
+
+        int maxDist = Integer.MIN_VALUE;
+        for (int i = 1; i <= N; i++) maxDist = Math.max(maxDist, distToX[i] + distFromX[i]);
+        System.out.println(maxDist);
+    }
+
+    private static int[] dijkstra(List<Node>[] graph, int start, int N) {
+        int[] dist = new int[N + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        PriorityQueue<Node> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
+
+        pq.offer(new Node(start, 0));
+        dist[start] = 0;
 
         while (!pq.isEmpty()) {
-            Target now = pq.poll();
-            int nextPos = now.next;
-            int total = now.total;
+            Node now = pq.poll();
+            int end = now.end;
+            int total = now.cost;
 
-            if (dist[nextPos][1] < total) continue;
-            dist[nextPos][1] = total;
+            if (dist[end] < total) continue;
 
-            for (Node next : graph[nextPos]) {
-                pq.add(new Target(next.end, total + next.cost));
+            for (Node next : graph[end]) {
+                if (dist[next.end] > total + next.cost) {
+                    dist[next.end] = total + next.cost;
+                    pq.add(new Node(next.end, total + next.cost));
+                }
             }
         }
 
-        int maxDist = Integer.MIN_VALUE;
-        for (int i = 1; i <= N; i++) maxDist = Math.max(maxDist, dist[i][0] + dist[i][1]);
-        System.out.println(maxDist);
+        return dist;
     }
 }
