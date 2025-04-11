@@ -2,22 +2,26 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] arr) {
-        Arrays.sort(arr);
-        int len = arr.length;
-        int before = arr[0];
+        int lcm = arr[0];
         
-        for (int i = 1; i < len; i++) {
-            int max = Math.max(before, arr[i]);
-            
-            while (true) {
-                if (max % before == 0 && max % arr[i] == 0) {
-                    before = max;
-                    break;
-                }
-                max++;
-            }
+        for (int i = 1; i < arr.length; i++) {
+            lcm = lcm(lcm, arr[i]);
         }
         
-        return before;
+        return lcm;
+    }
+    
+    int gcd(int a, int b) {
+        while (b != 0) {
+            int tmp = b;
+            b = a % b;
+            a = tmp;
+        }
+        
+        return a;
+    }
+    
+    int lcm(int a, int b) {
+        return a * b / gcd(a, b);
     }
 }
