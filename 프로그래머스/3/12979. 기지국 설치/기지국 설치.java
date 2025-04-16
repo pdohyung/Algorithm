@@ -8,7 +8,7 @@ class Solution {
             int start = station - w;
             int end = station + w;
             
-            if (start < 1 || start <= before) {
+            if (start <= before) {
                 before = end;
                 continue;
             }
