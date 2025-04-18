@@ -6,7 +6,6 @@ class Solution {
         int len = rocks.length;
         int start = 1;
         int end = distance;
-        int answer = 0;
         
         while (start <= end) {
             int mid = (start + end) / 2;
@@ -21,12 +20,12 @@ class Solution {
                 }
             }
             
-            if (distance - before < mid) cnt++; 
+            if (distance - before < mid) cnt++;
             
-            if (cnt <= n) {
-                start = mid + 1;
-            } else {
+            if (cnt > n) {
                 end = mid - 1;
+            } else {
+                start = mid + 1;
             }
         }
         
