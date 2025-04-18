@@ -24,13 +24,12 @@ class Solution {
             if (distance - before < mid) cnt++; 
             
             if (cnt <= n) {
-                answer = mid;
                 start = mid + 1;
             } else {
                 end = mid - 1;
             }
         }
         
-        return answer;
+        return end;
     }
 }
