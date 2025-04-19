@@ -1,26 +1,34 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	static int[] S = new int[301];
-	static int[][] D = new int[301][3];
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int N = Integer.parseInt(br.readLine());
 
-		for(int i = 1; i <= N; i++){
-			S[i] = Integer.parseInt(br.readLine());
-		}
-		D[1][1] = S[1];
-		D[1][2] = 0;
-		D[2][1] = S[2];
-		D[2][2] = S[1] + S[2];
+    static BufferedReader br;
+    static StringTokenizer st;
+    static int[] costs;
+    static int[] dp;
 
-		for(int i = 3; i <= N; i++){
-			D[i][1] = Math.max(D[i - 2][1], D[i - 2][2]) + S[i];
-			D[i][2] = D[i - 1][1] + S[i];
-		}
-		System.out.println(Math.max(D[N][1], D[N][2]));
-	}
+    public static void main(String[] args) throws IOException {
+        br = new BufferedReader(new InputStreamReader(System.in));
+
+        int N = Integer.parseInt(br.readLine());
+        costs = new int[N + 1];
+        dp = new int[N + 1];
+
+        for (int i = 1; i <= N; i++) {
+            int cost = Integer.parseInt(br.readLine());
+            costs[i] = cost;
+        }
+
+        dp[1] = costs[1];
+        if (N > 1) {
+            dp[2] = dp[1] + costs[2];
+        }
+
+        for (int i = 3; i <= N; i++) {
+            dp[i] = Math.max(dp[i - 2], dp[i - 3] + costs[i - 1]) + costs[i];
+//            System.out.println(dp[i]);
+        }
+        System.out.println(dp[N]);
+    }
 }
