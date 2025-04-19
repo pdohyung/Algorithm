@@ -32,8 +32,6 @@ public class Main {
         visited = new boolean[N + 1];
 
         cnt = 1;
-        visited[R] = true;
-        result[R] = cnt++;
         dfs(R);
 
         for (int i = 1; i <= N; i++) {
@@ -42,10 +40,11 @@ public class Main {
     }
 
     static void dfs(int now) {
+        visited[now] = true;
+        result[now] = cnt++;
+
         for (int next : graph[now]) {
             if (!visited[next]) {
-                visited[next] = true;
-                result[next] = cnt++;
                 dfs(next);
             }
         }
