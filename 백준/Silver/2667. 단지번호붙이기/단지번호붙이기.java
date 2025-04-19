@@ -1,94 +1,76 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 class Node {
-    private final int x;
-    private final int y;
+    int x, y;
 
-    public Node(int x, int y) {
+    Node(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
-    static int[][] map;
-    static boolean[][] visit;
-    static List<Integer> res;
-    static int N;
-    static int cnt;
 
+    static int N;
+    static int[][] map;
+    static boolean[][] visited;
+    static int[] dx = {0, 0, -1, 1};
+    static int[] dy = {-1, 1, 0, 0};
+    static List<Integer> result;
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
-
-    void solution() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        map = new int[N + 1][N + 1];
-        visit = new boolean[N + 1][N + 1];
-        res = new ArrayList<>();
+        map = new int[N][N];
+        visited = new boolean[N][N];
+        result = new ArrayList<>();
 
-        for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= N; j++) {
-                map[i][j] = -1;
+        for (int i = 0; i < N; i++) {
+            char[] line = br.readLine().toCharArray();
+            for (int j = 0; j < N; j++) {
+                if (line[j] == '0') map[i][j] = 0;
+                else map[i][j] = 1;
             }
         }
 
-        for (int i = 1; i <= N; i++) {
-            String line = br.readLine();
-            for (int j = 1; j <= N; j++) {
-                map[i][j] = line.codePointAt(j - 1) - 48;
-            }
-        }
-
-        for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= N; j++) {
-                if (map[i][j] == 1 && !visit[i][j]) {
-                    cnt = 1;
-                    bfs(new Node(i, j));
-                    res.add(cnt);
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (!visited[i][j] && map[i][j] == 1) {
+                    result.add(bfs(new Node(i, j)));
                 }
             }
         }
 
-        Collections.sort(res);
-        System.out.println(res.size());
-        for (Integer r : res) {
-            System.out.println(r);
-        }
+        Collections.sort(result);
+        System.out.println(result.size());
+        for (int r : result) System.out.println(r);
     }
 
-    private void bfs(Node node) {
-        Queue<Node> q = new LinkedList<>();
-        q.add(node);
-        visit[node.getX()][node.getY()] = true;
+    static int bfs(Node start) {
+        Queue<Node> q = new ArrayDeque<>();
+        q.add(start);
+        visited[start.x][start.y] = true;
+        int cnt = 1;
 
         while (!q.isEmpty()) {
-            Node nowNode = q.poll();
+            Node now = q.poll();
+            int x = now.x;
+            int y = now.y;
+
             for (int i = 0; i < 4; i++) {
-                int nx = nowNode.getX() + dx[i];
-                int ny = nowNode.getY() + dy[i];
+                int nx = x + dx[i];
+                int ny = y + dy[i];
 
-                if (ny < 0 || ny > N || nx < 0 || nx > N) continue;
-                if (map[nx][ny] == 0 || visit[nx][ny]) continue;
+                if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+                if (visited[nx][ny] || map[nx][ny] == 0) continue;
 
-                visit[nx][ny] = true;
+                visited[nx][ny] = true;
                 q.add(new Node(nx, ny));
                 cnt++;
             }
         }
+
+        return cnt;
     }
 }
