@@ -1,24 +1,24 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int[] D;
-
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
-
-    void solution() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        D = new int[N + 2];
-        D[1] = 1;
-        D[2] = 2;
+        int[] dp = new int[N + 2];
+
+        dp[1] = 1;
+        dp[2] = 2;
+
+        if (N < 3) {
+            System.out.println(dp[N]);
+            return;
+        }
 
         for (int i = 3; i <= N; i++) {
-            D[i] = (D[i - 1] + D[i - 2]) % 15746;
+            dp[i] = (dp[i - 1] + dp[i - 2]) % 15746;
         }
-        System.out.println(D[N]);
+
+        System.out.println(dp[N]);
     }
 }
