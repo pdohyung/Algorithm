@@ -1,29 +1,22 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 public class Main {
 
-    static boolean[] visit;
+    static int[] result;
+    static boolean[] visited;
     static List<Integer>[] graph;
-    static List<Integer> result;
-    static int[] answer;
+    static int cnt;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         int N = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
-        int startNode = Integer.parseInt(st.nextToken());
+        int R = Integer.parseInt(st.nextToken());
 
         graph = new ArrayList[N + 1];
-        visit = new boolean[N + 1];
-        result = new ArrayList<Integer>();
-        answer = new int[N + 1];
-
-        for (int i = 1; i <= N; i++) {
-            graph[i] = new ArrayList<>();
-        }
+        for (int i = 1; i <= N; i++) graph[i] = new ArrayList<>();
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -33,28 +26,26 @@ public class Main {
             graph[e].add(s);
         }
 
-        for (int i = 1; i < N; i++) {
-            Collections.sort(graph[i]);
-        }
+        for (int i = 1; i <= N; i++) Collections.sort(graph[i]);
 
-        dfs(startNode);
+        result = new int[N + 1];
+        visited = new boolean[N + 1];
 
-        for (int i = 0; i < result.size(); i++) {
-//            System.out.println(result.get(i) + " " + i + 1);
-            answer[result.get(i)] = i + 1;
-        }
+        cnt = 1;
+        visited[R] = true;
+        result[R] = cnt++;
+        dfs(R);
 
         for (int i = 1; i <= N; i++) {
-            System.out.println(answer[i]);
+            System.out.println(result[i]);
         }
     }
 
-    private static void dfs(int now) {
-        visit[now] = true;
-        result.add(now);
-
+    static void dfs(int now) {
         for (int next : graph[now]) {
-            if (!visit[next]) {
+            if (!visited[next]) {
+                visited[next] = true;
+                result[next] = cnt++;
                 dfs(next);
             }
         }
