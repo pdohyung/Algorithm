@@ -1,26 +1,17 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-    static boolean[] visited;
-    static ArrayList<Integer>[] graph;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int computers = Integer.parseInt(br.readLine());
-        int edges = Integer.parseInt(br.readLine());
-        visited = new boolean[computers + 1];
-        graph = new ArrayList[computers + 1];
+        int N = Integer.parseInt(br.readLine());
+        int M = Integer.parseInt(br.readLine());
 
-        for (int i = 1; i < computers + 1; i++) {
-            graph[i] = new ArrayList<Integer>();
-        }
+        ArrayList<Integer>[] graph = new ArrayList[N + 1];
+        for (int i = 1; i <= N; i++) graph[i] = new ArrayList<>();
+        boolean[] visited = new boolean[N + 1];
 
-        for (int i = 0; i < edges; i++) {
+        for (int i = 0; i < M; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             int start = Integer.parseInt(st.nextToken());
             int end = Integer.parseInt(st.nextToken());
@@ -28,25 +19,23 @@ public class Main {
             graph[end].add(start);
         }
 
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(1);
+        visited[1] = true;
+        int cnt = 0;
 
-        dfs(graph[1], 1);
+        while (!q.isEmpty()) {
+            int now = q.poll();
 
-        int count = 0;
-        for (int i = 1; i < computers + 1; i++) {
-            if (visited[i]) {
-                count++;
+            for (int next : graph[now]) {
+                if (!visited[next]) {
+                    visited[next] = true;
+                    cnt++;
+                    q.add(next);
+                }
             }
         }
-        System.out.println(count - 1);
-    }
 
-    private static void dfs(List<Integer> computer, int node) {
-        if (visited[node]) {
-            return;
-        }
-        visited[node] = true;
-        for (Integer i : computer) {
-            dfs(graph[i], i);
-        }
+        System.out.println(cnt);
     }
 }
