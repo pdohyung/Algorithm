@@ -2,39 +2,33 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
+
     static int N, M;
-    static int[] res;
-    static boolean[] visit;
+    static boolean[] visited;
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-    void solution() throws IOException {
-        st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        res = new int[10];
-        visit = new boolean[10];
-        dfs(1, 0);
+        visited = new boolean[N + 1];
+
+        dfs(0, 1, new StringBuilder());
     }
 
-    private void dfs(int start, int cnt) {
-        if (cnt == M) {
-            for (int i = 0; i < M; i++) {
-                System.out.print(res[i] + " ");
-            }
-            System.out.println();
+    private static void dfs(int depth, int idx, StringBuilder now) {
+        if (depth == M) {
+            System.out.println(now);
             return;
         }
-        for (int i = start; i <= N; i++) {
-            if (!visit[i]) {
-                res[cnt] = i;
-                visit[i] = true;
-                dfs(i + 1, cnt + 1);
-                visit[i] = false;
+
+        for (int i = idx; i <= N; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                StringBuilder next = new StringBuilder(now);
+                dfs(depth + 1, i, next.append(i).append(" "));
+                visited[i] = false;
             }
         }
     }
