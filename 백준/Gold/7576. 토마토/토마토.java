@@ -1,94 +1,85 @@
-import java.io.*;
-import java.util.*;
 
-/**
- * 6 4
- * 0 0 0 0 0 0
- * 0 0 0 0 0 0
- * 0 0 0 0 0 0
- * 0 0 0 0 0 1
- */
+import java.util.*;
+import java.io.*;
 
 class Node {
-    int x;
-    int y;
+    int x, y;
 
-    Node(int x, int y) {
+    public Node(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    int getX() {
-        return x;
-    }
-
-    int getY() {
-        return y;
     }
 }
 
 public class Main {
 
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
-
-    static BufferedReader br;
-    static StringTokenizer st;
-    static int[][] map;
-    static boolean[][] visit;
-    static ArrayDeque<Node> q;
     static int N, M;
+    static int[][] map;
+    static int[] dx = {0, 0, -1, 1};
+    static int[] dy = {-1, 1, 0, 0};
+    static List<Node> tomato;
 
     public static void main(String[] args) throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
-        st = new StringTokenizer(br.readLine());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        map = new int[M][N];
-        visit = new boolean[M][N];
-        q = new ArrayDeque<>();
+        N = Integer.parseInt(st.nextToken());
+        map = new int[N][M];
+        int cnt = 0;
+        tomato = new ArrayList<>();
 
-        for (int i = 0; i < M; i++) {
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                int condition = Integer.parseInt(st.nextToken());
-                map[i][j] = condition;
-                if (condition == 1) {
-                    q.add(new Node(i, j));
-                }
+            for (int j = 0; j < M; j++) {
+                int now = Integer.parseInt(st.nextToken());
+
+                if (now == 1) {
+                    tomato.add(new Node(i, j));
+                } else if (now == 0) cnt++;
+
+                map[i][j] = now;
             }
+        }
+
+        if (cnt == 0) {
+            System.out.println(0);
+            return;
         }
 
         bfs();
-        int max = Integer.MIN_VALUE;
 
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                int condition = map[i][j];
-                if (condition == 0) {
+        int answer = 0;
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (map[i][j] == 0) {
                     System.out.println(-1);
                     return;
                 }
-                max = Math.max(max, condition);
+
+                answer = Math.max(answer, map[i][j]);
             }
         }
 
-        System.out.println(max - 1);
+        System.out.println(answer - 1);
     }
 
     static void bfs() {
+        Queue<Node> q = new ArrayDeque<>(tomato);
+
         while (!q.isEmpty()) {
             Node now = q.poll();
+            int x = now.x;
+            int y = now.y;
+
             for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+                int nx = x + dx[i];
+                int ny = y + dy[i];
 
-                if (ny >= N || ny < 0 || nx >= M || nx < 0) continue;
-                if (map[nx][ny] != 0 || visit[nx][ny]) continue;
+                if (nx < 0 || nx >= N || ny < 0 || ny >= M || map[nx][ny] != 0) continue;
 
-                map[nx][ny] = map[now.getX()][now.getY()] + 1;
-                visit[nx][ny] = true;
+                map[nx][ny] = map[x][y] + 1;
                 q.add(new Node(nx, ny));
             }
         }
