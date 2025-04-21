@@ -1,3 +1,4 @@
+
 import java.util.*;
 import java.io.*;
 
@@ -7,10 +8,14 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         char[] line1 = br.readLine().toCharArray();
         char[] line2 = br.readLine().toCharArray();
-        int[][] dp = new int[line1.length + 1][line2.length + 1];
 
-        for (int i = 1; i <= line1.length; i++) {
-            for (int j = 1; j <= line2.length; j++) {
+        int N = line1.length;
+        int M = line2.length;
+
+        int[][] dp = new int[N + 1][M + 1];
+
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= M; j++) {
                 if (line1[i - 1] == line2[j - 1]) {
                     dp[i][j] = dp[i - 1][j - 1] + 1;
                 } else {
@@ -19,10 +24,6 @@ public class Main {
             }
         }
 
-//        for (int i = 0; i < dp.length; i++) {
-//            System.out.println(Arrays.toString(dp[i]));
-//        }
-
-        System.out.println(dp[line1.length][line2.length]);
+        System.out.println(dp[N][M]);
     }
 }
