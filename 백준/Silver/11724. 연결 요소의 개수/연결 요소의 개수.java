@@ -1,28 +1,20 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+
+import java.util.*;
+import java.io.*;
 
 public class Main {
-    static ArrayList<Integer>[] graph;
-    static boolean[] visited;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-        int node = Integer.parseInt(st.nextToken());
-        int edge = Integer.parseInt(st.nextToken());
+        boolean[] visited = new boolean[N + 1];
+        List<Integer>[] graph = new ArrayList[N + 1];
+        for (int i = 1; i <= N; i++) graph[i] = new ArrayList<>();
 
-        graph = new ArrayList[node + 1];
-        visited = new boolean[node + 1];
-
-        for (int i = 1; i < node + 1; i++) {
-            graph[i] = new ArrayList<Integer>();
-        }
-
-        for (int i = 0; i < edge; i++) {
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
@@ -30,25 +22,29 @@ public class Main {
             graph[e].add(s);
         }
 
-        int count = 0;
-        for (int i = 1; i < node + 1; i++) {
-            if (!visited[i]) {
-                count++;
-                DFS(i);
-            }
-        }
-        System.out.println(count);
-    }
+        int cnt = 0;
 
-    static void DFS(int node) {
-        if (visited[node]) {
-            return;
-        }
-        visited[node] = true;
-        for (int i : graph[node]) {
-            if (!visited[i]) {
-                DFS(i);
+        for (int i = 1; i <= N; i++) {
+            if (visited[i]) continue;
+
+            Queue<Integer> q = new ArrayDeque<>();
+            q.add(i);
+            visited[i] = true;
+
+            while (!q.isEmpty()) {
+                int now = q.poll();
+
+                for (int next : graph[now]) {
+                    if (!visited[next]) {
+                        visited[next] = true;
+                        q.add(next);
+                    }
+                }
             }
+
+            cnt++;
         }
+
+        System.out.println(cnt);
     }
 }
