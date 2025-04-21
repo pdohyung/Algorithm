@@ -1,15 +1,6 @@
+
 import java.util.*;
 import java.io.*;
-
-class Node {
-    int s;
-    int e;
-
-    public Node(int s, int e) {
-        this.s = s;
-        this.e = e;
-    }
-}
 
 public class Main {
 
@@ -17,33 +8,35 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
-        ArrayList<Node> lines = new ArrayList<>();
+        List<int[]> lines = new ArrayList<>();
 
         for (int i = 0; i < N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
-            lines.add(new Node(s, e));
+            lines.add(new int[]{s, e});
         }
 
-        Collections.sort(lines, (o1, o2) -> Integer.compare(o1.s, o2.s));
+        Collections.sort(lines, (a, b) -> Integer.compare(a[0], b[0]));
 
         int[] dp = new int[lines.size()];
-        int max = 0;
+        Arrays.fill(dp, 1);
+        int cnt = 0;
 
-        for (int i = 0; i < dp.length; i++) {
-            dp[i] = 1;
-            Node node1 = lines.get(i);
+        for (int i = 0; i < lines.size(); i++) {
+            int[] now = lines.get(i);
 
             for (int j = 0; j < i; j++) {
-                Node node2 = lines.get(j);
-                if (node1.e > node2.e) {
+                int[] next = lines.get(j);
+
+                if (next[1] < now[1]) {
                     dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
-            max = Math.max(max, dp[i]);
+
+            cnt = Math.max(cnt, dp[i]);
         }
-//        System.out.println(Arrays.toString(dp));
-        System.out.println(N - max);
+
+        System.out.println(lines.size() - cnt);
     }
 }
