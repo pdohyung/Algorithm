@@ -1,56 +1,51 @@
+
 import java.util.*;
 import java.io.*;
 
 public class Main {
 
-    static int N, M, answer;
-    static ArrayList<Integer>[] graph;
     static boolean[] visited;
+    static List<Integer>[] graph;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
         graph = new ArrayList[N];
         for (int i = 0; i < N; i++) graph[i] = new ArrayList<>();
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-            graph[start].add(end);
-            graph[end].add(start);
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            graph[s].add(e);
+            graph[e].add(s);
         }
-
-        answer = 0;
 
         for (int i = 0; i < N; i++) {
             visited = new boolean[N];
-            dfs(i, 0);
-            if (answer == 1) break;
+            visited[i] = true;
+            dfs(1, i);
         }
 
-        System.out.println(answer);
+        System.out.println(0);
     }
 
-    private static void dfs(int start, int depth) {
-        if (depth == 4) {
-            answer = 1;
+    static void dfs(int depth, int now) {
+        if (depth == 5) {
+            System.out.println(1);
+            System.exit(0);
             return;
         }
 
-        visited[start] = true;
-
-        for (int next : graph[start]) {
+        for (int next : graph[now]) {
             if (!visited[next]) {
-                dfs(next, depth + 1);
-                if (answer == 1) break;
+                visited[next] = true;
+                dfs(depth + 1, next);
+                visited[next] = false;
             }
         }
-
-        visited[start] = false;
     }
 }
