@@ -1,4 +1,3 @@
-
 import java.util.*;
 import java.io.*;
 
@@ -7,37 +6,38 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        int[] value = new int[N];
+        int[] A = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         for (int i = 0; i < N; i++) {
-            value[i] = Integer.parseInt(st.nextToken());
+            A[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(value);
+        Arrays.sort(A);
 
-        int result = Integer.MAX_VALUE;
-        int answer1 = 0;
-        int answer2 = 0;
+        int start = 0;
+        int end = A.length - 1;
+        int diff = Integer.MAX_VALUE;
+        int[] answer = new int[2];
 
-        int s = 0;
-        int e = N - 1;
+        while (start < end) {
+            int result = A[start] + A[end];
 
-        while (s < e) {
-            int sum = value[s] + value[e];
-
-            if (result > Math.abs(sum)) {
-                result = Math.abs(sum);
-                answer1 = value[s];
-                answer2 = value[e];
+            if (Math.abs(result) < diff) {
+                diff = Math.abs(result);
+                answer[0] = A[start];
+                answer[1] = A[end];
             }
 
-            if (sum < 0) {
-                s++;
+            if (result == 0) break;
+
+            if (result < 0) {
+                start++;
             } else {
-                e--;
+                end--;
             }
         }
-        System.out.println(answer1 + " " + answer2);
+
+        System.out.println(answer[0] + " " + answer[1]);
     }
 }
