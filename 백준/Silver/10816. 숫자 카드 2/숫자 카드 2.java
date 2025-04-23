@@ -1,31 +1,35 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        Map<Integer, Integer> hashMap = new HashMap<>();
 
         int N = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
+        Map<Integer, Integer> map = new HashMap<>();
+        StringBuilder answer = new StringBuilder();
 
-        for(int i = 0; i < N; i++) {
-            int num = Integer.parseInt(st.nextToken());
-            hashMap.put(num, hashMap.getOrDefault(num, 0) + 1);
+        for (int i = 0; i < N; i++) {
+            int now = Integer.parseInt(st.nextToken());
+            map.put(now, map.getOrDefault(now, 0) + 1);
         }
 
         int M = Integer.parseInt(br.readLine());
         st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < M; i++) {
+            int now = Integer.parseInt(st.nextToken());
 
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < M; i++) {
-            int num = Integer.parseInt(st.nextToken());
-            sb.append(hashMap.getOrDefault(num, 0)).append(" ");
+            if (map.containsKey(now)) {
+                answer.append(map.get(now));
+            } else {
+                answer.append(0);
+            }
+
+            answer.append(" ");
         }
-        System.out.println(sb.toString());
+
+        System.out.println(answer);
     }
 }
