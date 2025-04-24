@@ -1,27 +1,30 @@
-import java.io.*;
-import java.util.*;
-
 class Solution {
     
-    static int[][] Dungeons;
-    static boolean[] visit;
-    static int answer;
+    int[][] d;
+    boolean[] visited;
+    int len, answer;
     
     public int solution(int k, int[][] dungeons) {
-        Dungeons = dungeons;
-        visit = new boolean[Dungeons.length];
+        d = dungeons;
+        len = dungeons.length;
+        visited = new boolean[len];
         answer = 0;
-        find(k, 0);
+        
+        dfs(0, k);
+        
         return answer;
     }
     
-    static void find(int k, int cnt) {
-        for(int i = 0; i < Dungeons.length; i++) {
-            if(!visit[i] && k >= Dungeons[i][0]) {
-                visit[i] = true;
-                find(k - Dungeons[i][1], cnt + 1);
-                answer = Math.max(answer, cnt + 1);
-                visit[i] = false;
+    void dfs(int depth, int k) {
+        answer = Math.max(answer, depth);
+        
+        for (int i = 0; i < len; i++) {
+            int[] now = d[i];
+            
+            if (!visited[i] && k >= now[0]) {
+                visited[i] = true;
+                dfs(depth + 1, k - now[1]);
+                visited[i] = false;
             }
         }
     }
