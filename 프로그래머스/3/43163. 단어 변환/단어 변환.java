@@ -1,49 +1,56 @@
 class Solution {
     
-    static String nbegin, ntarget;
-    static String[] nwords;
-    static boolean[] visited;
-    static int min;
+    boolean[] visited;
+    String[] W;
+    String T;
+    int answer;
     
     public int solution(String begin, String target, String[] words) {
-        // 데이터 정리
-        nbegin = begin;
-        ntarget = target;
-        nwords = words;
+        W = words;
+        T = target;
+        boolean isContain = false;
         
+        for (String w : W) {
+            if (w.equals(target)) {
+                isContain = true;
+                break;
+            }
+        }
+        
+        if (!isContain) return 0;
+        
+        answer = Integer.MAX_VALUE;
         visited = new boolean[words.length];
-        min = Integer.MAX_VALUE;
         
-        // 백트래킹 수행
         dfs(0, begin);
         
-        if(min == Integer.MAX_VALUE) return 0;
-        return min;
+        if (answer == Integer.MAX_VALUE) return 0;
+        else return answer;
     }
     
-    public void dfs(int cnt, String now) {
-        if(ntarget.equals(now)) {
-            min = Math.min(min, cnt);
+    void dfs(int depth, String now) {
+        if (now.equals(T)) {
+            answer = Math.min(answer, depth);
             return;
         }
         
-        for(int i = 0; i < nwords.length; i++) {
-            String next = nwords[i];
-            if(!visited[i] && isValid(now, next)) {
+        for (int i = 0; i < W.length; i++) {
+            if (!visited[i] && check(now, W[i])) {
                 visited[i] = true;
-                dfs(cnt + 1, next);
+                dfs(depth + 1, W[i]);
                 visited[i] = false;
             }
         }
     }
     
-    public boolean isValid(String s1, String s2) {
+    boolean check(String now, String next) {
         int cnt = 0;
-        for(int i = 0; i < s1.length(); i++) {
-            if(s1.charAt(i) != s2.charAt(i)) cnt++;
+        
+        for (int i = 0; i < now.length(); i++) {
+            if (now.charAt(i) != next.charAt(i)) cnt++;
         }
         
-        if(cnt == 1) return true;
-        return false;
+        if (cnt <= 1) return true;
+        else return false;
     }
 }
