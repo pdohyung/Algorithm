@@ -2,19 +2,21 @@ import java.util.*;
 
 class Solution {
     public int solution(int[][] routes) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
+        for (int[] r : routes) pq.offer(r);
         
-        Arrays.sort(routes, (o1, o2) -> Integer.compare(o1[1], o2[1]));
+        int cnt = 1;
+        int last = pq.peek()[1];
         
-        int answer = 0;
-        int camera = Integer.MIN_VALUE;
-        
-        for(int[] route : routes) {
-            if(camera < route[0]) {
-                camera = route[1];
-                answer++;
-            }
+        while (!pq.isEmpty()) {
+            int[] now = pq.poll();
+            
+            if (now[0] > last) {
+                cnt++;
+                last = now[1];
+            } 
         }
         
-        return answer;
+        return cnt;
     }
 }
