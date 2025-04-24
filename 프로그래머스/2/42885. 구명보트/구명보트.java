@@ -3,24 +3,22 @@ import java.util.*;
 class Solution {
     public int solution(int[] people, int limit) {
         Arrays.sort(people);
-        int s = 0;
-        int e = people.length - 1;
-        int answer = 0;
         
-        while (s <= e) {
-            if (s == e) {
-                if (people[s] <= limit) answer++;
-                break;
+        int start = 0;
+        int end = people.length - 1;
+        int cnt = 0;
+        
+        while (start <= end) {
+            if (people[start] + people[end] > limit) {
+                cnt++;
+                end--;
             } else {
-                if (people[s] + people[e] <= limit) {
-                    s++;
-                    e--;
-                } else e--;
-                
-                answer++;
+                cnt++;
+                start++;
+                end--;
             }
         }
         
-        return answer;
+        return cnt;
     }
 }
