@@ -1,48 +1,42 @@
-import java.io.*;
 import java.util.*;
 
 class Solution {
-    
-    static ArrayList<Integer>[] adjList;
-    static boolean[] visit;
-    
     public int solution(int n, int[][] computers) {
-        int answer = 0;
-        adjList = new ArrayList[n];
-        visit = new boolean[n];
-
-        for (int i = 0; i < adjList.length; i++) {
-            adjList[i] = new ArrayList<>();
-        }
-
-        for (int i = 0; i < computers.length; i++) {
-            int[] edge = computers[i];
-            for (int j = 0; j < edge.length; j++) {
+        ArrayList<Integer>[] graph = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) graph[i] = new ArrayList<>();
+        boolean[] visited = new boolean[n + 1];
+        
+        for (int i = 0; i < n; i++) {
+            int[] nodes = computers[i];
+            
+            for (int j = 0; j < nodes.length; j++) {
                 if (i == j) continue;
-
-                if (edge[j] == 1) {
-                    adjList[i].add(j);
+                if (nodes[j] == 1) graph[i + 1].add(j + 1);
+            }
+        }
+        
+        int answer = 0;
+        
+        for (int i = 1; i <= n; i++) {
+            if (visited[i]) continue;
+            
+            answer++;
+            visited[i] = true;
+            Queue<Integer> q = new ArrayDeque<>();
+            q.offer(i);
+            
+            while (!q.isEmpty()) {
+                int now = q.poll();
+                
+                for (int next : graph[now]) {
+                    if (!visited[next]) {
+                        visited[next] = true;
+                        q.offer(next);
+                    }
                 }
             }
         }
-
-        for (int i = 0; i < n; i++) {
-            if (!visit[i]) {
-                answer++;
-                dfs(i);
-            }
-        }
-
+        
         return answer;
-    }
-
-    private static void dfs(int now) {
-        visit[now] = true;
-
-        for (int next : adjList[now]) {
-            if (!visit[next]) {
-                dfs(next);
-            }
-        }
     }
 }
