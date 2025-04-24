@@ -12,23 +12,25 @@ class Node {
 class Solution {
     public int solution(int n, int[][] costs) {
         ArrayList<Node>[] graph = new ArrayList[n];
-        boolean[] visited = new boolean[n];
         for (int i = 0; i < n; i++) graph[i] = new ArrayList<>();
         
-        for (int[] cost : costs) {
-            int start = cost[0];
-            int end = cost[1];
-            int c = cost[2];
-            graph[start].add(new Node(end, c));
-            graph[end].add(new Node(start, c));
+        for (int[] c : costs) {
+            int start = c[0];
+            int end = c[1];
+            int cost = c[2];
+            
+            graph[start].add(new Node(end, cost));
+            graph[end].add(new Node(start, cost));
         }
         
+        // 각 노드와 연결된 최단 간선 찾기
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> Integer.compare(a.cost, b.cost));
+        pq.offer(new Node(0, 0));
+        
+        boolean[] visited = new boolean[n];
         int answer = 0;
         
-        PriorityQueue<Node> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
-        pq.add(new Node(0, 0));
-        
-        while (!pq.isEmpty()) {
+        while(!pq.isEmpty()) {
             Node now = pq.poll();
             int end = now.end;
             int cost = now.cost;
