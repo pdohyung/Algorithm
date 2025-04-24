@@ -1,56 +1,65 @@
 import java.util.*;
 
 class Node {
-    int x, y;
+    private final int x;
+    private final int y;
     
-    Node (int x, int y) {
+    public Node(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+    
+    public int getX() {
+        return this.x;
+    }
+    
+    public int getY() {
+        return this.y;
     }
 }
 
 class Solution {
     
-    int n, m;
-    int[][] map;
-    int[] dx = {0, 0, -1, 1};
-    int[] dy = {-1, 1, 0, 0};
+    static int[] dx = { 0, 1, 0, -1 };
+    static int[] dy = { 1, 0, -1, 0 };
+    static int[][] inputMaps;
+    static boolean[][] visit;
+    static int n, m, answer;
     
     public int solution(int[][] maps) {
         n = maps.length;
         m = maps[0].length;
+        inputMaps = maps;
+        visit = new boolean[n][m];
         
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                maps[i][j]--;
-            }
-        }
-        
-        map = maps;
         bfs(new Node(0, 0));
         
-        if (map[n - 1][m - 1] == 0) return -1;
-        else return map[n - 1][m - 1];
+        if(inputMaps[n - 1][m - 1] == 1) {
+            answer = -1;
+        } else {
+            answer = inputMaps[n-1][m-1];
+        }
+        return answer;
     }
     
-    void bfs(Node start) {
-        Queue<Node> q = new ArrayDeque<>();
-        q.offer(start);
-        map[start.x][start.y] = 1;
+    private void bfs(Node node) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(node);
+        visit[node.getX()][node.getY()] = true;
         
-        while (!q.isEmpty()) {
-            Node now = q.poll();
-            int x = now.x;
-            int y = now.y;
-            
-            for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
+        while(!q.isEmpty()) {
+            Node newNode = q.poll();
+            for(int i = 0; i < 4; i++) {
+                int nx = newNode.getX() + dx[i];
+                int ny = newNode.getY() + dy[i];
                 
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m || map[nx][ny] != 0) continue;
+                if (ny < 0 || ny >= m || nx < 0 || nx >= n) continue;
+                if (visit[nx][ny] || inputMaps[nx][ny] == 0) continue;
                 
-                map[nx][ny] = map[x][y] + 1;
-                q.offer(new Node(nx, ny));
+                inputMaps[nx][ny] = inputMaps[newNode.getX()][newNode.getY()] + 1;
+                visit[nx][ny] = true;
+                q.add(new Node(nx, ny));
+                
             }
         }
     }
