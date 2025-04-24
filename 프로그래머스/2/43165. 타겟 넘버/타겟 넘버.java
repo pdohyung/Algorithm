@@ -1,30 +1,29 @@
-import java.util.*;
-
 class Solution {
-    
-    int[] num, cnt;
-    int N;
+    static int answer;
+    static int end;
+    static int targetNumber;
+    static int[] inputNumbers;
     
     public int solution(int[] numbers, int target) {
-        num = numbers;
-        N = numbers.length;
-        cnt = new int[1_001];
-
+        answer = 0;
+        end = numbers.length;
+        targetNumber = target;
+        inputNumbers = numbers;
+        
         dfs(0, 0);
-
-        return cnt[target];
+        
+        return answer;
     }
     
-    void dfs(int depth, int now) {
-        if (depth == N) {
-            if (now > 0) cnt[now]++;
+    private void dfs(int res, int depth) {
+        if(depth == end) {
+            if (res == targetNumber) {
+                answer++;
+            }
             return;
         }
         
-        int plus = now + num[depth];
-        int minus = now - num[depth];
-        
-        dfs(depth + 1, plus);
-        dfs(depth + 1, minus);
+         dfs(res + inputNumbers[depth], depth + 1);
+         dfs(res - inputNumbers[depth], depth + 1);
     }
 }
