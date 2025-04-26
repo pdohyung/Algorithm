@@ -20,6 +20,8 @@ class Solution {
             int eH = Integer.parseInt(endTime[0]);
             int eM = Integer.parseInt(endTime[1]);
             
+            // if (eH == 0) eH = 24;
+            
             int totalTime = (eH - sH) * 60 + (eM - sM);
             StringBuilder totalM = new StringBuilder();
             int now = 0;
