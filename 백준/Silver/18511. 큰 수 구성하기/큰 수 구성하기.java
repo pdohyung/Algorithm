@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Main {
 
-    static String N;
+    static int N;
     static int K;
     static int answer;
     static int[] numbers;
@@ -12,7 +12,7 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = st.nextToken();
+        N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
         numbers = new int[K];
         st = new StringTokenizer(br.readLine());
@@ -20,24 +20,18 @@ public class Main {
         for (int i = 0; i < K; i++) numbers[i] = Integer.parseInt(st.nextToken());
 
         answer = 0;
-        dfs(0, new StringBuilder());
+        dfs(0);
 
         System.out.println(answer);
     }
 
-    private static void dfs(int depth, StringBuilder now) {
-        if (depth > 0) {
-            int result = Integer.parseInt(now.toString());
-            if (result <= Integer.parseInt(N)) {
-                answer = Math.max(answer, result);
-            }
-        }
-        if (depth == N.length()) return;
+    private static void dfs(int now) {
+        if (now > N) return;
+
+        answer = Math.max(answer, now);
 
         for (int i = 0; i < K; i++) {
-            now.append(numbers[i]);
-            dfs(depth + 1, now);
-            now.deleteCharAt(now.length() - 1);
+            dfs(now * 10 + numbers[i]);
         }
     }
 }
