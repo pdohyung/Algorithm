@@ -16,26 +16,21 @@ public class Main {
 
         int left = 0;
         int right = 0;
-        int cnt = S[left] % 2 == 0 ? 0 : 1;
-        int max = S[left] % 2 == 0 ? 1 : 0;
+        int cnt = 0;
+        int max = 0;
 
-        while (left < N - 1) {
-            if (cnt > K) {
-                if (left < right) {
-                    if (S[left++] % 2 != 0) cnt--;
-                } else {
-                    if (S[++right] % 2 != 0) cnt++;
-                }
+        while (right < N) {
+            if (S[right] % 2 == 0) {
+                max = Math.max(max, right - left - cnt + 1);
             } else {
-                max = Math.max(max, right - left + 1 - cnt);
-
-                if (right < N - 1) {
-                    if (S[++right] % 2 != 0) cnt++;
-                } else {
-                    if (S[left++] % 2 != 0) cnt--;
-                }
+                cnt++;
             }
 
+            while (cnt > K) {
+                if (S[left++] % 2 != 0) cnt--;
+            }
+
+            right++;
         }
 
         System.out.println(max);
