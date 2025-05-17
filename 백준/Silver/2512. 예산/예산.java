@@ -1,53 +1,47 @@
-import java.io.*;
+
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int[] budget;
-    static int N;
 
     public static void main(String[] args) throws IOException {
-        new Main().solution();
-    }
+        // 각 지방한테 가능한 한 최대의 예산을 지급
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    void solution() throws IOException {
-        N = Integer.parseInt(br.readLine());
-        st = new StringTokenizer(br.readLine());
-        int max = Integer.parseInt(br.readLine());
-        int sum = 0;
-        int low = 1;
-        int high = 0;
-        budget = new int[N];
+        int N = Integer.parseInt(br.readLine());
+        int[] C = new int[N];
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int start = 1;
+        int end = 0;
 
         for (int i = 0; i < N; i++) {
-            budget[i] = Integer.parseInt(st.nextToken());
-            sum += budget[i];
-            high = Math.max(high, budget[i]);
+            C[i] = Integer.parseInt(st.nextToken());
+            end = Math.max(end, C[i]);
         }
 
-        if (sum <= max) {
-            System.out.println(high);
-            return;
-        }
+        int M = Integer.parseInt(br.readLine());
 
-        while (low < high - 1) {
-            int mid = (low + high) / 2;
+        while (start <= end) {
+            int mid = (start + end) / 2;
+            int cost = 0;
 
-            if (find(mid) > max) {
-                high = mid;
+            for (int i = 0; i < N; i++) {
+                if (C[i] < mid) {
+                    cost += C[i];
+                } else {
+                    cost += mid;
+                }
+            }
+
+            if (cost <= M) {
+                start = mid + 1;
             } else {
-                low = mid;
+                end = mid - 1;
             }
         }
-        System.out.println(low);
-    }
 
-    private int find(int standard) {
-        int sum = 0;
-        for (int i = 0; i < N; i++) {
-            sum += Math.min(standard, budget[i]);
-        }
-        return sum;
+        System.out.println(end);
     }
 }
