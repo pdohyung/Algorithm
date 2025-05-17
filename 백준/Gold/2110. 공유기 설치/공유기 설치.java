@@ -1,43 +1,45 @@
+
 import java.util.*;
 import java.io.*;
 
 public class Main {
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         int N = Integer.parseInt(st.nextToken());
         int C = Integer.parseInt(st.nextToken());
-        int[] houses = new int[N];
+        int[] h = new int[N];
 
-        for (int i = 0; i < N; i++) houses[i] = Integer.parseInt(br.readLine());
-        Arrays.sort(houses);
+        for (int i = 0; i < N; i++) {
+            h[i] = Integer.parseInt(br.readLine());
+        }
 
-        int low = 1;
-        int high = houses[N - 1] - houses[0];
+        Arrays.sort(h);
 
-        int answer = 0;
-        while (low <= high) {
-            int mid = (low + high) / 2;
+        int start = 1;
+        int end = h[N - 1] - h[0];
 
+        while (start <= end) {
+            int mid = (start + end) / 2;
             int cnt = 1;
-            int before = houses[0];
+            int before = 0;
 
             for (int i = 1; i < N; i++) {
-                if (houses[i] - before >= mid) {
+                if (h[i] - h[before] >= mid) {
                     cnt++;
-                    before = houses[i];
+                    before = i;
                 }
             }
 
             if (cnt >= C) {
-                answer = mid;
-                low = mid + 1;
+                start = mid + 1;
             } else {
-                high = mid - 1;
+                end = mid - 1;
             }
         }
 
-        System.out.println(answer);
+        System.out.println(end);
     }
 }
