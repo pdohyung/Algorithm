@@ -3,23 +3,21 @@ import java.util.*;
 import java.io.*;
 
 class Shark {
-    int idx, r, c, speed, dir, size, cnt;
+    int r, c, speed, dir, size;
 
-    public Shark(int idx, int r, int c, int speed, int dir, int size, int cnt) {
-        this.idx = idx;
+    public Shark(int r, int c, int speed, int dir, int size) {
         this.r = r;
         this.c = c;
         this.speed = speed;
         this.dir = dir;
         this.size = size;
-        this.cnt = cnt;
     }
 }
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, 1, -1};
+    static int[] dx = {-1, 0, 1, 0};
+    static int[] dy = {0, -1, 0, 1};
 
     public static void main(String[] args) throws IOException {
         // 낚시왕이 한칸 이동하여 땅에서 가장 가까운 상어를 잡음
@@ -32,10 +30,7 @@ public class Main {
         int R = Integer.parseInt(st.nextToken());
         int C = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
-        int[][] map = new int[R + 1][C + 1];
-
-        Map<Integer, Shark> sharks = new HashMap<>();
-        List<Shark> now = new ArrayList<>();
+        Shark[][] map = new Shark[R + 1][C + 1];
 
         for (int i = 1; i <= M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -44,109 +39,70 @@ public class Main {
             int s = Integer.parseInt(st.nextToken());
             int d = Integer.parseInt(st.nextToken());
             int z = Integer.parseInt(st.nextToken());
-            Shark shark = new Shark(i, r, c, s, d - 1, z, 0);
-            sharks.put(i, shark);
-            now.add(shark);
-            map[r][c] = i;
+
+            if (d == 1) d = 0;
+            else if (d == 4) d = 1;
+
+            map[r][c] = new Shark(r, c, s, d, z);
         }
 
         int result = 0;
 
         // 낚시왕 이동하면서 상어 잡기
         for (int i = 1; i <= C; i++) {
+
             for (int j = 1; j <= R; j++) {
-                if (map[j][i] != 0) {
-                    int idx = map[j][i];
-                    result += sharks.get(idx).size;
-                    now.remove(sharks.get(idx));
-                    map[j][i] = 0;
+                if (map[j][i] != null) {
+                    result += map[j][i].size;
+                    map[j][i] = null;
                     break;
                 }
             }
 
-            List<Shark> target = new ArrayList<>();
+            Queue<Shark> sharks = new LinkedList<>();
 
-            // 상어가 이동한 후에, 이미 상어가 있다면 진행 차수가 같은지 검사하여 갱신
-            for (Shark s : now) {
-                s.cnt++;
-                if (s.idx == map[s.r][s.c]) {
-                    map[s.r][s.c] = 0;
-                }
-                int x = s.r;
-                int y = s.c;
-                int d = s.dir;
-
-                // 상어 이동
-                int dist = s.speed;
-
-                if ((s.speed >= (R - 1)) && (d == 0 || d == 1)) {
-                    int cnt = s.speed / (R - 1);
-
-                    if (cnt % 2 == 1) {
-                        x = (R + 1) - x;
-                        d = d == 0 ? 1 : 0;
+            for (int x = 1; x <= R; x++) {
+                for (int y = 1; y <= C; y++) {
+                    if (map[x][y] != null) {
+                        sharks.offer(map[x][y]);
                     }
-
-                    dist %= (R - 1);
-                }
-
-                if ((s.speed >= (C - 1)) && (d == 2 || d == 3)) {
-                    int cnt = s.speed / (C - 1);
-
-                    if (cnt % 2 == 1) {
-                        y = (C + 1) - y;
-                        d = d == 2 ? 3 : 2;
-                    }
-
-                    dist %= (C - 1);
-                }
-
-                for (int j = 0; j < dist; j++) {
-                    int nx = x + dx[d];
-                    int ny = y + dy[d];
-
-                    if (nx < 1 || nx > R || ny < 1 || ny > C) {
-                        if (d == 0) d = 1;
-                        else if (d == 1) d = 0;
-                        else if (d == 2) d = 3;
-                        else d = 2;
-
-                        x = nx + 2 * dx[d];
-                        y = ny + 2 * dy[d];
-                    } else {
-                        x = nx;
-                        y = ny;
-                    }
-                }
-
-                // 상어 이동 갱신
-                s.r = x;
-                s.c = y;
-                s.dir = d;
-
-                // 이미 상어가 있는지 체크
-                if (map[x][y] != 0 && sharks.get(map[x][y]).cnt == s.cnt) {
-                    Shark o = sharks.get(map[x][y]);
-
-                    if (o.size > s.size) {
-                        target.add(s);
-                    } else {
-                        target.add(o);
-                        map[x][y] = s.idx;
-                    }
-                } else {
-                    map[x][y] = s.idx;
                 }
             }
 
-//            for (int j = 0; j <= R; j++) {
-//                System.out.println(Arrays.toString(map[j]));
-//            }
-//            System.out.println();
+            map = new Shark[R + 1][C + 1];
 
-            // 제거 대상
-            for (Shark t : target) {
-                now.remove(t);
+            while (!sharks.isEmpty()) {
+                Shark s = sharks.poll();
+                int dist = s.speed;
+
+                if (s.dir == 0 || s.dir == 2) {
+                    dist %= (R - 1) * 2;
+                } else {
+                    dist %= (C - 1) * 2;
+                }
+
+                for (int j = 0; j < dist; j++) {
+                    int nx = s.r + dx[s.dir];
+                    int ny = s.c + dy[s.dir];
+
+                    if (nx < 1 || nx > R || ny < 1 || ny > C) {
+                        s.r -= dx[s.dir];
+                        s.c -= dy[s.dir];
+                        s.dir = (s.dir + 2) % 4;
+                        continue;
+                    }
+
+                    s.r = nx;
+                    s.c = ny;
+                }
+
+                if (map[s.r][s.c] != null) {
+                    if (s.size > map[s.r][s.c].size) {
+                        map[s.r][s.c] = s;
+                    }
+                } else {
+                    map[s.r][s.c] = s;
+                }
             }
         }
 
