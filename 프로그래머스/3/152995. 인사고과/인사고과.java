@@ -36,7 +36,7 @@ class Solution {
             int a = now.a;
             int b = now.b;
             
-            if (a > targetA && b > targetB) return -1;
+            // if (a > targetA && b > targetB) return -1;
             
             if (b >= maxB) {
                 result.add(now);
