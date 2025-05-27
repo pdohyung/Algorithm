@@ -1,61 +1,70 @@
 import java.util.*;
 
+class Remove {
+    int i, v;
+    
+    Remove(int i, int v) {
+        this.i = i;
+        this.v = v;
+    }
+}
+
 class Solution {
     public String solution(int n, int k, String[] cmd) {
-        int[] prev = new int[n];
-        int[] next = new int[n];
-        Stack<Integer> deleted = new Stack<>();
+        // 한 명령어에 한 행만 선택 가능함
+        // U는 윗행, D는 아래행
+        // C는 현재 행 삭제 후 바로 아래 행 선택 마지막 행이면, 바로 윗행
+        // Z는 가장 최근에 삭제한 행을 복구, 선택된 행(now)은 바뀌지 않음, Z를 여러번 실행할 수도 있으므로 전체 기록 필요
+        int now = k;
+        Stack<Remove> R = new Stack<>();
+        LinkedList<Integer> table = new LinkedList<>();
         
         for (int i = 0; i < n; i++) {
-            prev[i] = i - 1;
-            next[i] = i + 1;
+            table.add(i);
         }
         
-        next[n - 1] = -1;
+        // table.remove(0);
+        // table.add(n, 100);
+        // table.add(n + 1, 100);
+        // table.add(n + 2, 100);
+        // table.add(n + 3, 100);
         
         for (String c : cmd) {
             String[] line = c.split(" ");
-            String oper = line[0];
+            char oper = line[0].charAt(0);
             
-            if (oper.equals("U")) {
-                int cnt = Integer.parseInt(line[1]);
-                while (cnt-- > 0) k = prev[k];
-            } else if (oper.equals("D")) {
-                int cnt = Integer.parseInt(line[1]);
-                while (cnt-- > 0) k = next[k];
-            } else if (oper.equals("C")) {
-                deleted.push(k);
+            if (oper == 'U') {
+                now -= Integer.parseInt(line[1]);
+            } else if (oper == 'D') {
+                now += Integer.parseInt(line[1]);
+            } else if (oper == 'C') {
+                R.push(new Remove(now, table.remove(now)));
                 
-                if (next[k] != -1) prev[next[k]] = prev[k];
-                if (prev[k] != -1) next[prev[k]] = next[k];
-                
-                if (next[k] == -1) k = prev[k];
-                else k = next[k];
+                if (table.size() == now) now--;
             } else {
-                int now = deleted.pop();
+                Remove p = R.pop();
+                table.add(p.i, p.v);
                 
-                if (next[now] != -1) prev[next[now]] = now;
-                if (prev[now] != -1) next[prev[now]] = now;
+                if (p.i <= now) now++;
             }
-            
-            // System.out.println(k);
-            // System.out.println(Arrays.toString(prev));
-            // System.out.println(Arrays.toString(next));
+            // System.out.println(now + " size = " + table.size());
+            // System.out.println(table);
+            // System.out.println(R);
             // System.out.println();
         }
         
-        // System.out.println(deleted);
+        boolean[] result = new boolean[n];
+        Arrays.fill(result, true);
+        
+        while (!R.isEmpty()) {
+            result[R.pop().i] = false;
+        }
         
         StringBuilder answer = new StringBuilder();
-        boolean[] removed = new boolean[n];
         
-        for (int d : deleted) {
-            removed[d] = true;
-        }
-
         for (int i = 0; i < n; i++) {
-            if (removed[i]) answer.append('X');
-            else answer.append('O');
+            if (result[i]) answer.append("O");
+            else answer.append("X");
         }
         
         return answer.toString();
