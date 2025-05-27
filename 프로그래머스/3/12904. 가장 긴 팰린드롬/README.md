@@ -1,10 +1,10 @@
 # [level 3] 가장 긴 팰린드롬 - 12904 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/12904) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/12904#) 
 
 ### 성능 요약
 
-메모리: 59.9 MB, 시간: 40.22 ms
+메모리: 60.1 MB, 시간: 35.38 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 05월 20일 14:36:55
+2025년 05월 27일 15:50:20
 
 ### 문제 설명
 

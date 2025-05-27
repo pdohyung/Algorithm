@@ -1,36 +1,32 @@
 class Solution {
     public int solution(String s) {
-        int len = s.length();
-        boolean[][] dp = new boolean[len + 1][len + 1];
-        char[] A = new char[len + 1];
+        // dp[i][j], 인덱스 i부터 j까지의 수가 팰린드롬인지 여부
+        // 가장 긴 길이를 리턴
+        int N = s.length();
+        char[] A = s.toCharArray();
+        boolean[][] dp = new boolean[N][N];
         
-        A[0] = '.';
-        for (int i = 1; i <= len; i++) {
-            A[i] = s.charAt(i - 1);
-        }
-        
-        for (int i = 1; i <= len; i++) {
-            int l = i;
-            int r = i;
+        for (int i = 0; i < N; i++) {
+            int left = i;
+            int right = i;
             
-            while (l > 0 && r <= len && A[l] == A[r]) {
-                dp[l--][r++] = true;
+            while (left >= 0 && right < N && A[left] == A[right]) {
+                dp[left--][right++] = true;
             }
             
-            l = i;
-            r = i + 1;
+            left = i;
+            right = i + 1;
             
-            while (l > 0 && r <= len && A[l] == A[r]) {
-                dp[l--][r++] = true;
+            while (left >= 0 && right < N && A[left] == A[right]) {
+                dp[left--][right++] = true;
             }
         }
         
         int answer = 0;
         
-        for (int i = 1; i <= len; i++) {
-            for (int j = i; j <= len; j++) {
+        for (int i = 0; i < N; i++) {
+            for (int j = i; j < N; j++) {
                 if (dp[i][j]) {
-                    // System.out.println(i + " " + j + " " + dp[i][j]);
                     answer = Math.max(answer, j - i + 1);
                 }
             }
