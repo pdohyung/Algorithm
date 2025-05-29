@@ -2,70 +2,55 @@ import java.util.*;
 
 class Solution {
     public String solution(int n, int t, int m, String[] timetable) {
-        // 셔틀은 09:00부터 총 n회 t분 간격으로 역에 도착, 하나의 셔틀에는 최대 m명의 승객이 탐
-        // 도착한 순간까지 대기열에 선 크루원들을 최대 인원까지 태움
-        // 콘은 게으르기 때문에 같은 시각에 도착해도 대기열 가장 뒤에 섬
-        // 모든 크루는 23:59가 되면 집으로 가고, 다음날 셔틀을 타는 일은 없음
-        // 콘이 셔틀을 타고 사무실로 갈 수 있는 도착 시간 중 제일 늦은 시각을 구해라.
-        
-        // 시간 입력을 숫자로 변환
+        // 크루들의 도착 시간을 숫자로 변환하여 pq에 저장
+        // 셔틀 운행을 반복하여 가장 늦게 탈 수 있는 시간을 갱신
+        // 반복이 끝나고 마지막 셔틀이 비었다면 마지막 셔틀의 출발 시간으로 갱신
         PriorityQueue<Integer> pq = new PriorityQueue<>();
+        
         for (String tt : timetable) {
-            String[] s = tt.split(":");
-            int v = Integer.parseInt(s[0]) * 60 + Integer.parseInt(s[1]);
-            pq.offer(v);
+            String[] info = tt.split(":");
+            int H = Integer.parseInt(info[0]);
+            int M = Integer.parseInt(info[1]);
+            pq.offer(H * 60 + M);
         }
         
-        int now = 540;
+        int start = 540;
+        int me = 0;
+        int cnt = 0;
         
-        // 마지막 버스를 제외하고 처리
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < m; j++) {
-                if (!pq.isEmpty() && pq.peek() <= now) {
+        for (int i = 0; i < n; i++) {
+            cnt = 0;
+            
+            while (!pq.isEmpty()) {
+                int now = pq.peek();
+                
+                if (cnt < m && pq.peek() <= start) {
                     pq.poll();
-                }
+                    cnt++;
+                } else break;
+                
+                me = now - 1;
             }
             
-            now += t;
+            start += t;
         }
         
-        int before = now;
-        int cnt = 0;
-        int result = 0;
-        
-        // 마지막 버스 처리
-        for (int j = 0; j < m - 1; j++) {
-            if (!pq.isEmpty() && pq.peek() <= now) {
-                before = pq.poll();
-                cnt++;
-            }
+        if (cnt < m) {
+            me = start - t;
         }
         
-        // 대기열이 비었거나 대상자가 없으면 셔틀 도착시간으로 갱신
-        if (pq.isEmpty() || pq.peek() > now) {
-            result = now;
-        } else {
-            if (before > pq.peek()) {
-                result = pq.poll() - 1;
-            } else if (before == pq.peek()) {
-                result = before - 1;
-            } else {
-                result = before;
-            }
-        }
-        
-        // 정답 문자열 생성
         StringBuilder answer = new StringBuilder();
-        int H = result / 60;
-        int M = result % 60;
         
-        if (H / 10 > 0) answer.append(H);
-        else answer.append("0").append(H);
+        int H = me / 60;
+        int M = me % 60;
+        
+        if (H < 10) answer.append("0");
+        answer.append(H);
         
         answer.append(":");
         
-        if (M / 10 > 0) answer.append(M);
-        else answer.append("0").append(M);
+        if (M < 10) answer.append("0");
+        answer.append(M);
         
         return answer.toString();
     }
