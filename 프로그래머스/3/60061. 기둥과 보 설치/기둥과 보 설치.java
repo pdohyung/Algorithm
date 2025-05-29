@@ -13,7 +13,7 @@ class Solution {
         // 만약 작업을 수행한 결과가 조건을 만족하지 않는다면 해당 작업을 무시
         // 구조물 설치 입력은, 기둥 보는 오른쪽, 기둥은 위쪽 방향으로 설치, 삭제 진행
         N = n;
-        M = new boolean[N + 1][N + 1][2];
+        M = new boolean[N + 2][N + 2][2];
         
         for (int[] bf : build_frame) {
             int x = bf[0];
@@ -76,10 +76,15 @@ class Solution {
     }
     
     boolean canInstall(int x, int y, int type) {
-        if (type == 0) {
-            return y == 0 || M[x][y][1] || M[x][y - 1][0] || (x > 0 && M[x - 1][y][1]);
-        } else {
-            return M[x][y - 1][0] || M[x + 1][y - 1][0] || (x > 0 && M[x - 1][y][1] && M[x + 1][y][1]);
+        if (type == 0) { // 기둥
+            if (y == 0) return true; // 바닥인 경우
+            else if ((y > 0 && M[x][y - 1][0])) return true; // 다른 기둥의 위인 경우
+            else if ((x > 0 && M[x - 1][y][1]) || M[x][y][1]) return true; // 보의 위인 경우
+            return false;
+        } else { // 보
+            if (M[x][y - 1][0] || M[x + 1][y - 1][0]) return true; // 한쪽 끝이 기둥 위인 경우
+            else if (x > 0 && M[x - 1][y][1] && M[x + 1][y][1]) return true; // 양쪽 끝이 보와 연결된 경우
+            return false;
         }
     }
 }
