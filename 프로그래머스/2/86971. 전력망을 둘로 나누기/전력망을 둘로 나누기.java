@@ -1,57 +1,45 @@
 import java.util.*;
 
 class Solution {
-    
-    static ArrayList<Integer>[] graph;
-    static boolean[] visited;
-    static int result, min;
-    
     public int solution(int n, int[][] wires) {
-        graph = new ArrayList[n + 1];
-        min = Integer.MAX_VALUE;
+        // n개의 송전탑이 하나의 트리 형태, 전선들 중 하나를 끊어서 네트워크를 2개로 분할
+        // 이때 두 전력망이 갖게 되는 송전탐의 개수를 최대한 비슷하게 만들기, 송전탑 개수 차이를 리턴
+        int answer = n;
         
-        // 그래프 초기화
-        for(int i = 1; i <= n; i++) {
-            graph[i] = new ArrayList<>();
+        ArrayList<Integer>[] graph = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) graph[i] = new ArrayList<>();
+        
+        for (int[] w : wires) {
+            int s = w[0];
+            int e = w[1];
+            graph[s].add(e);
+            graph[e].add(s);
         }
         
-        // 송전탑 전선 추가
-        for(int[] wire : wires) {
-            graph[wire[0]].add(wire[1]);
-            graph[wire[1]].add(wire[0]);
-        }
-        
-        // 완전 탐색
-        for(int[] wire : wires) {
-            result = 0;
-            visited = new boolean[n + 1];
-
-            graph[wire[0]].remove(Integer.valueOf(wire[1]));
-            graph[wire[1]].remove(Integer.valueOf(wire[0]));
+        for (int[] w : wires) {
+            boolean[] visited = new boolean[n + 1];
+            visited[w[0]] = true;
             
-            for(int i = 1; i <= n; i++) {
-                dfs(i);
-                if(result != 0) {
-                    break;
+            Queue<Integer> q = new LinkedList<>();
+            q.offer(w[1]);
+            visited[w[1]] = true;
+            int cnt = 1;
+            
+            while(!q.isEmpty()) {
+                int now = q.poll();
+                
+                for (int next : graph[now]) {
+                    if (!visited[next]) {
+                        visited[next] = true;
+                        q.offer(next);
+                        cnt++;
+                    }
                 }
             }
             
-            graph[wire[0]].add(wire[1]);
-            graph[wire[1]].add(wire[0]);
-            
-            min = Math.min(min, Math.abs((n - result) - result));
+            answer = Math.min(answer, Math.abs((n - cnt) - cnt));
         }
-        return min;
-    }
-    
-    public void dfs(int now) {
         
-        for(int next : graph[now]) {
-            if(!visited[next]){
-                result++;
-                visited[next] = true;
-                dfs(next);
-            }
-        }
+        return answer;
     }
 }
