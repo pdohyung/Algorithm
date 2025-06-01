@@ -2,35 +2,41 @@ import java.util.*;
 
 class Solution {
     public int solution(int N, int number) {
-        List<Set<Integer>> list = new ArrayList<>();
-        for (int i = 0; i <= 8; i++) list.add(new HashSet<>());
-        String start = "";
+        // 사칙 연산으로 number을 표현할 때, 최소 사용횟수 리턴
+        int answer = -1;
+        Set<Integer>[] result = new HashSet[9];
+        for (int i = 1; i <= 8; i++) result[i] = new HashSet<>();
+        
+        String now = "";
         
         for (int i = 1; i <= 8; i++) {
-            Set<Integer> now = list.get(i);
-            start += String.valueOf(N);
-            now.add(Integer.parseInt(start));
-            
+            now += N;
+            result[i].add(Integer.parseInt(now));
+        }
+        
+        for (int i = 2; i <= 8; i++) {
             for (int j = 1; j < i; j++) {
-                Set<Integer> aSet = list.get(j);
-                Set<Integer> bSet = list.get(i - j);
+                Set<Integer> A = result[j];
+                Set<Integer> B = result[i - j];
                 
-                for (int a : aSet) {
-                    for (int b : bSet) {
-                        now.add(a + b);
-                        now.add(a - b);
-                        now.add(a * b);
-                        if (b != 0) now.add(a / b);
+                for (int a : A) {
+                    for (int b : B) {
+                        result[i].add(a + b);
+                        result[i].add(a - b);
+                        result[i].add(a * b);
+                        if (b != 0) result[i].add(a / b);
                     }
                 }
-                
-            }
-            
-            if (now.contains(number)) {
-                return i;
             }
         }
         
-        return -1;
+        for (int i = 1; i <= 8; i++) {
+            if (result[i].contains(number)) {
+                answer = i;
+                break;
+            }
+        }
+        
+        return answer;
     }
 }
