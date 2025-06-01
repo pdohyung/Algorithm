@@ -1,56 +1,54 @@
+import java.util.*;
+
+class Word {
+    String w;
+    int cnt;
+    
+    Word (String w, int cnt) {
+        this.w = w;
+        this.cnt = cnt;
+    }
+}
+
 class Solution {
-    
-    boolean[] visited;
-    String[] W;
-    String T;
-    int answer;
-    
     public int solution(String begin, String target, String[] words) {
-        W = words;
-        T = target;
-        boolean isContain = false;
+        // 한 번에 한 개의 알파벳만 바꿀 수 있고, words에 있는 단어로만 변환이 가능함
+        int answer = 0;
+        int N = words.length;
+        boolean[] visited = new boolean[N];
+        Queue<Word> q = new LinkedList<>();
+        q.offer(new Word(begin, 0));
         
-        for (String w : W) {
+        while (!q.isEmpty()) {
+            Word now = q.poll();
+            String w = now.w;
+            int cnt = now.cnt;
+            
             if (w.equals(target)) {
-                isContain = true;
+                answer = cnt;
                 break;
             }
-        }
-        
-        if (!isContain) return 0;
-        
-        answer = Integer.MAX_VALUE;
-        visited = new boolean[words.length];
-        
-        dfs(0, begin);
-        
-        if (answer == Integer.MAX_VALUE) return 0;
-        else return answer;
-    }
-    
-    void dfs(int depth, String now) {
-        if (now.equals(T)) {
-            answer = Math.min(answer, depth);
-            return;
-        }
-        
-        for (int i = 0; i < W.length; i++) {
-            if (!visited[i] && check(now, W[i])) {
-                visited[i] = true;
-                dfs(depth + 1, W[i]);
-                visited[i] = false;
+            
+            for (int i = 0; i < N; i++) {
+                if (!visited[i] && isValid(w, words[i])) {
+                    visited[i] = true;
+                    q.offer(new Word(words[i], cnt + 1));
+                }
             }
         }
+
+        return answer;
     }
     
-    boolean check(String now, String next) {
+    boolean isValid(String s1, String s2) {
         int cnt = 0;
         
-        for (int i = 0; i < now.length(); i++) {
-            if (now.charAt(i) != next.charAt(i)) cnt++;
+        for (int i = 0; i < s1.length(); i++) {
+            if (s1.charAt(i) != s2.charAt(i)) cnt++;
         }
         
-        if (cnt <= 1) return true;
-        else return false;
+        if (cnt == 1) return true;
+        
+        return false;
     }
 }
