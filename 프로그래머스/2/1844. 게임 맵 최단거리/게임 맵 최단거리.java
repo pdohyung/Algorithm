@@ -1,65 +1,60 @@
 import java.util.*;
 
 class Node {
-    private final int x;
-    private final int y;
+    int x, y;
     
-    public Node(int x, int y) {
+    Node (int x, int y) {
         this.x = x;
         this.y = y;
-    }
-    
-    public int getX() {
-        return this.x;
-    }
-    
-    public int getY() {
-        return this.y;
     }
 }
 
 class Solution {
     
-    static int[] dx = { 0, 1, 0, -1 };
-    static int[] dy = { 1, 0, -1, 0 };
-    static int[][] inputMaps;
-    static boolean[][] visit;
-    static int n, m, answer;
+    int N, M;
+    int[][] B;
+    int[] dx = {0, 0, -1, 1};
+    int[] dy = {-1, 1, 0, 0};
     
     public int solution(int[][] maps) {
-        n = maps.length;
-        m = maps[0].length;
-        inputMaps = maps;
-        visit = new boolean[n][m];
+        // (1, 1)에서 (N, M)까지 최단거리 구하기
+        N = maps.length;
+        M = maps[0].length;
+        B = new int[N][M];
+        
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (maps[i][j] == 0) {
+                    B[i][j] = -1;
+                } else {
+                    B[i][j] = 0;
+                }
+            }
+        }
         
         bfs(new Node(0, 0));
         
-        if(inputMaps[n - 1][m - 1] == 1) {
-            answer = -1;
-        } else {
-            answer = inputMaps[n-1][m-1];
-        }
-        return answer;
+        return B[N - 1][M - 1] == 0 ? -1 : B[N - 1][M - 1];
     }
     
-    private void bfs(Node node) {
+    void bfs(Node start) {
         Queue<Node> q = new LinkedList<>();
-        q.add(node);
-        visit[node.getX()][node.getY()] = true;
+        q.offer(start);
+        B[start.x][start.y] = 1;
         
-        while(!q.isEmpty()) {
-            Node newNode = q.poll();
-            for(int i = 0; i < 4; i++) {
-                int nx = newNode.getX() + dx[i];
-                int ny = newNode.getY() + dy[i];
+        while (!q.isEmpty()) {
+            Node now = q.poll();
+            int x = now.x;
+            int y = now.y;
+            
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
                 
-                if (ny < 0 || ny >= m || nx < 0 || nx >= n) continue;
-                if (visit[nx][ny] || inputMaps[nx][ny] == 0) continue;
+                if (nx < 0 || nx >= N || ny < 0 || ny >= M || B[nx][ny] != 0) continue;
                 
-                inputMaps[nx][ny] = inputMaps[newNode.getX()][newNode.getY()] + 1;
-                visit[nx][ny] = true;
-                q.add(new Node(nx, ny));
-                
+                B[nx][ny] = B[x][y] + 1;
+                q.offer(new Node(nx, ny));
             }
         }
     }
