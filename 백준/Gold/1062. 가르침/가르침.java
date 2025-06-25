@@ -34,8 +34,7 @@ public class Main {
             String now = br.readLine();
             now = now.replaceAll("anta", "");
             now = now.replaceAll("tica", "");
-            if (now.isEmpty() || canRead(now)) cnt++;
-            else words.add(now);
+            words.add(now);
         }
 
         dfs(0, 0);
