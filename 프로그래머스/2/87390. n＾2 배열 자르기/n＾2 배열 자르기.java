@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 class Solution {
@@ -11,15 +12,10 @@ class Solution {
             if (x >= y) {
                 result.add(x + 1);
             } else {
-                result.add(y + 1);
+                result.add(y + 1);                
             }
         }
         
-        int[] answer = new int[result.size()];
-        for (int i = 0; i < answer.length; i++) {
-            answer[i] = result.get(i);
-        }
-        
-        return answer;
+        return result.stream().mapToInt(i -> i).toArray();
     }
 }
