@@ -6,22 +6,22 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        int[] A = new int[N + 1];
-        for (int i = 1; i <= N; i++) A[i] = Integer.parseInt(br.readLine());
+        int[] line = new int[N];
+        for (int i = 0; i < N; i++) line[i] = Integer.parseInt(br.readLine());
 
-        int[] dp = new int[N + 1];
+        int[] dp = new int[N];
         Arrays.fill(dp, 1);
-        int max = 0;
+        int max = Integer.MIN_VALUE;
 
-        for (int i = 1; i <= N; i++) {
-            for (int j = 1; j < i; j++) {
-                if (A[i] > A[j]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
+        for (int i = 0; i < N; i++) {
+            for (int j = i; j < N; j++) {
+                if (line[j] > line[i]) {
+                    dp[j] = Math.max(dp[j], dp[i] + 1);
                 }
             }
             max = Math.max(max, dp[i]);
         }
-            
+
         System.out.println(N - max);
     }
 }
