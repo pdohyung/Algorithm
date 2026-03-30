@@ -1,55 +1,52 @@
-
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         int N = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(st.nextToken());
-        int[] things = new int[K];
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < K; i++) things[i] = Integer.parseInt(st.nextToken());
-
         Set<Integer> multitap = new HashSet<>();
-        int cnt = 0;
+        int[] order = new int[K];
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < K; i++) order[i] = Integer.parseInt(st.nextToken());
+        int result = 0;
 
         for (int i = 0; i < K; i++) {
-            int thing = things[i];
+            int now = order[i];
 
-            if (multitap.contains(thing)) continue;
+            if (multitap.contains(now)) continue;
             else if (multitap.size() < N) {
-                multitap.add(thing);
+                multitap.add(now);
                 continue;
             }
 
             int before = -1;
             int target = -1;
 
-            for (int m : multitap) {
+            for (int j : multitap) {
                 int next = Integer.MAX_VALUE;
 
-                for (int j = i + 1; j < K; j++) {
-                    if (things[j] == m) {
-                        next = j;
+                for (int k = i + 1; k < K; k++) {
+                    if (j == order[k]) {
+                        next = k;
                         break;
                     }
                 }
 
                 if (next > before) {
                     before = next;
-                    target = m;
+                    target = j;
                 }
             }
 
             multitap.remove(target);
-            multitap.add(thing);
-            cnt++;
+            multitap.add(now);
+            result++;
         }
 
-        System.out.println(cnt);
+        System.out.println(result);
     }
 }
